@@ -21,6 +21,7 @@ import {
 import { useState } from "react";
 
 import myLogo from "/logo.svg";
+import { Link } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
@@ -85,7 +86,9 @@ const NavbarRoot = () => {
   return (
     <nav className={classes.navbar}>
       <Center>
-        <Image height={40} width={40} src={myLogo} alt="logo" />
+        <Link to={"/"}>
+          <Image height={40} width={40} src={myLogo} alt="logo" />
+        </Link>
       </Center>
 
       <div className={classes.navbarMenu}>
