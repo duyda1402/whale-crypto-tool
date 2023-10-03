@@ -15,13 +15,12 @@ import {
   IconHome2,
   IconLogout,
   IconSettings,
-  IconSwitchHorizontal,
   IconUser,
 } from "@tabler/icons-react";
 import { useState } from "react";
 
-import myLogo from "/logo.svg";
 import { Link } from "react-router-dom";
+import myLogo from "/logo.svg";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
@@ -68,7 +67,6 @@ const mockMenu = [
   { icon: IconCalendarStats, label: "Releases" },
   { icon: IconUser, label: "Account" },
   { icon: IconFingerprint, label: "Security" },
-  { icon: IconSettings, label: "Settings" },
 ];
 
 const NavbarRoot = () => {
@@ -83,6 +81,7 @@ const NavbarRoot = () => {
       onClick={() => setActive(index)}
     />
   ));
+
   return (
     <nav className={classes.navbar}>
       <Center>
@@ -98,7 +97,7 @@ const NavbarRoot = () => {
       </div>
 
       <Stack justify="center" spacing={rem(4)}>
-        <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
+        <NavbarLink icon={IconSettings} label="Setting" />
         <NavbarLink icon={IconLogout} label="Logout" />
       </Stack>
     </nav>

@@ -6,7 +6,7 @@ const NotFoundPage = () => {
   return (
     <React.Fragment>
       <TitleRoot title="Not Found" />
-      <ErrorLayout height="100vh" />;
+      <ErrorLayout height="100vh" />
     </React.Fragment>
   );
 };
