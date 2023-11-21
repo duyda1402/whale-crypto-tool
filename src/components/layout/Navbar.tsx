@@ -8,20 +8,22 @@ import {
   rem,
 } from "@mantine/core";
 import {
-  IconCalendarStats,
-  IconDeviceDesktopAnalytics,
+  IconVersionsFilled,
+  IconFileFilled,
   IconFingerprint,
-  IconGauge,
+  IconAffiliateFilled,
   IconHome2,
   IconLogout,
-  IconSettings,
+  IconSettingsFilled,
   IconSwitchHorizontal,
   IconUser,
+  IconAppsFilled,
 } from "@tabler/icons-react";
 import { useState } from "react";
 
 import myLogo from "/logo.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { KEY_MENU_ACTIVE } from "../../common";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
@@ -62,25 +64,28 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const mockMenu = [
-  { icon: IconHome2, label: "Home" },
-  { icon: IconGauge, label: "Dashboard" },
-  { icon: IconDeviceDesktopAnalytics, label: "Analytics" },
-  { icon: IconCalendarStats, label: "Releases" },
-  { icon: IconUser, label: "Account" },
-  { icon: IconFingerprint, label: "Security" },
-  { icon: IconSettings, label: "Settings" },
+  { icon: IconAppsFilled, label: "Home", link: "/" },
+  { icon: IconAffiliateFilled, label: "Network", link: "/network" },
+  { icon: IconFileFilled, label: "Contract", link: "/contract" },
+  { icon: IconVersionsFilled, label: "ABI", link: "/abi" },
+  { icon: IconSettingsFilled, label: "Settings", link: "/setting" },
 ];
 
 const NavbarRoot = () => {
   const { classes } = useStyles();
-  const [active, setActive] = useState(0);
-
-  const links = mockMenu.map((link, index) => (
+  const navigate = useNavigate();
+  const [active, setActive] = useState<string>(
+    localStorage.getItem(KEY_MENU_ACTIVE) || "$home"
+  );
+  const menus = mockMenu.map((menu, index) => (
     <NavbarLink
-      {...link}
-      key={link.label}
-      isActive={active === index}
-      onClick={() => setActive(index)}
+      {...menu}
+      key={index}
+      isActive={active === (menu.link.split("/")[1] || "$home")}
+      onClick={() => {
+        setActive(menu.link.split("/")[1] || "$home");
+        return navigate(menu.link);
+      }}
     />
   ));
   return (
@@ -93,7 +98,7 @@ const NavbarRoot = () => {
 
       <div className={classes.navbarMenu}>
         <Stack justify="center" spacing={rem(4)}>
-          {links}
+          {menus}
         </Stack>
       </div>
 
