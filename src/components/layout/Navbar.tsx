@@ -13,7 +13,6 @@ import {
   IconFileFilled,
   IconHome2,
   IconLogout,
-  IconSettings,
   IconSettingsFilled,
   IconVersionsFilled,
 } from "@tabler/icons-react";
