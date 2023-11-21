@@ -8,22 +8,20 @@ import {
   rem,
 } from "@mantine/core";
 import {
-  IconVersionsFilled,
-  IconFileFilled,
-  IconFingerprint,
   IconAffiliateFilled,
+  IconAppsFilled,
+  IconFileFilled,
   IconHome2,
   IconLogout,
+  IconSettings,
   IconSettingsFilled,
-  IconSwitchHorizontal,
-  IconUser,
-  IconAppsFilled,
+  IconVersionsFilled,
 } from "@tabler/icons-react";
 import { useState } from "react";
 
-import myLogo from "/logo.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { KEY_MENU_ACTIVE } from "../../common";
+import myLogo from "/logo.svg";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
@@ -88,6 +86,7 @@ const NavbarRoot = () => {
       }}
     />
   ));
+
   return (
     <nav className={classes.navbar}>
       <Center>
@@ -103,7 +102,6 @@ const NavbarRoot = () => {
       </div>
 
       <Stack justify="center" spacing={rem(4)}>
-        <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
         <NavbarLink icon={IconLogout} label="Logout" />
       </Stack>
     </nav>

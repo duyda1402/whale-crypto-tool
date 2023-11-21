@@ -1,4 +1,4 @@
-import { Group, Stack, SystemProp, Text, Title } from "@mantine/core";
+import { Stack, SystemProp, Text, rem } from "@mantine/core";
 import { CSSProperties } from "react";
 
 type Props = {
@@ -13,12 +13,14 @@ const ErrorLayout = ({
   height,
 }: Props) => {
   return (
-    <Group h={height} align="center" px="xl">
-      <Stack spacing="xs">
-        <Title>{code}</Title>
-        <Text color="gray.7">{description}</Text>
-      </Stack>
-    </Group>
+    <Stack spacing="xs" h={height} justify="center" px="xl">
+      <Text fw={900} fz={rem(54)}>
+        {code}
+      </Text>
+      <Text color="gray.7" fz={rem(24)}>
+        {description}
+      </Text>
+    </Stack>
   );
 };
 
