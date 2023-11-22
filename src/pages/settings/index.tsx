@@ -1,5 +1,7 @@
+import React from "react";
+
 function SettingPage() {
-  return <div>SettingPage</div>;
+  return <React.Fragment>SettingPage</React.Fragment>;
 }
 
 export default SettingPage;

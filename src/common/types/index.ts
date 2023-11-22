@@ -8,6 +8,27 @@ export interface NetworkIF {
   chainId: number | string;
   currencySymbol: string;
   blockExplorerUrl?: string;
-  isSystem?: boolean;
+
   connectionInfo?: ConnectionInfo;
+  isSystem?: boolean;
+}
+
+export interface ContractIF {
+  uid: string;
+  name: string;
+  address: string;
+  abi: string;
+  isSystem?: boolean;
+}
+export interface AbiIF {
+  uid: string;
+  name: string;
+  payload: string;
+  isSystem?: boolean;
+}
+
+export interface DataLocal {
+  networks: NetworkIF[];
+  contracts: ContractIF[];
+  abis: AbiIF[];
 }
