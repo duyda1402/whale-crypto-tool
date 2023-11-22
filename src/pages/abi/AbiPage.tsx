@@ -1,7 +1,23 @@
 import React from "react";
+import TitleRoot from "../../components/common-ui/TitleRoot";
+import HeaderRoot from "../../components/common-ui/HeaderRoot";
+import { Center, Container, Text } from "@mantine/core";
 
 function AbiPage() {
-  return <React.Fragment>AbiPage</React.Fragment>;
+  return (
+    <React.Fragment>
+      <TitleRoot title="ABI" />
+      {/* Header */}
+      <HeaderRoot title="ABI" />
+      <Container p="xl" fluid miw={700}>
+        <Center mih={300}>
+          <Text fz="xl" fw={600} color="gray.5">
+            Come soon!
+          </Text>
+        </Center>
+      </Container>
+    </React.Fragment>
+  );
 }
 
 export default AbiPage;
