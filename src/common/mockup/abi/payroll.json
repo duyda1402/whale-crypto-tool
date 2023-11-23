@@ -1,0 +1,411 @@
+[
+     {
+          "inputs": [
+               {
+                    "internalType": "address",
+                    "name": "rolesRegister",
+                    "type": "address"
+               },
+               {
+                    "internalType": "address",
+                    "name": "gdnToken",
+                    "type": "address"
+               }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+     },
+     {
+          "inputs": [
+               {
+                    "internalType": "bytes32",
+                    "name": "role",
+                    "type": "bytes32"
+               },
+               {
+                    "internalType": "address",
+                    "name": "account",
+                    "type": "address"
+               }
+          ],
+          "name": "MissingRole",
+          "type": "error"
+     },
+     {
+          "anonymous": false,
+          "inputs": [
+               {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "previousAdmin",
+                    "type": "address"
+               },
+               {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "newAdmin",
+                    "type": "address"
+               }
+          ],
+          "name": "AdminChanged",
+          "type": "event"
+     },
+     {
+          "anonymous": false,
+          "inputs": [
+               {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "beacon",
+                    "type": "address"
+               }
+          ],
+          "name": "BeaconUpgraded",
+          "type": "event"
+     },
+     {
+          "anonymous": false,
+          "inputs": [
+               {
+                    "indexed": false,
+                    "internalType": "uint8",
+                    "name": "version",
+                    "type": "uint8"
+               }
+          ],
+          "name": "Initialized",
+          "type": "event"
+     },
+     {
+          "anonymous": false,
+          "inputs": [
+               {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "account",
+                    "type": "address"
+               }
+          ],
+          "name": "Paused",
+          "type": "event"
+     },
+     {
+          "anonymous": false,
+          "inputs": [
+               {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "caller",
+                    "type": "address"
+               },
+               {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "totalAmount",
+                    "type": "uint256"
+               },
+               {
+                    "components": [
+                         {
+                              "internalType": "uint32",
+                              "name": "accountNumber",
+                              "type": "uint32"
+                         },
+                         {
+                              "internalType": "uint256",
+                              "name": "amount",
+                              "type": "uint256"
+                         }
+                    ],
+                    "indexed": false,
+                    "internalType": "struct SalaryRecipient[]",
+                    "name": "recipients",
+                    "type": "tuple[]"
+               }
+          ],
+          "name": "PayrollTransfered",
+          "type": "event"
+     },
+     {
+          "anonymous": false,
+          "inputs": [
+               {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "caller",
+                    "type": "address"
+               },
+               {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "oldTreasuryWallet",
+                    "type": "address"
+               },
+               {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "newTreasuryWallet",
+                    "type": "address"
+               }
+          ],
+          "name": "SetTreasuryWallet",
+          "type": "event"
+     },
+     {
+          "anonymous": false,
+          "inputs": [
+               {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "account",
+                    "type": "address"
+               }
+          ],
+          "name": "Unpaused",
+          "type": "event"
+     },
+     {
+          "anonymous": false,
+          "inputs": [
+               {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "implementation",
+                    "type": "address"
+               }
+          ],
+          "name": "Upgraded",
+          "type": "event"
+     },
+     {
+          "inputs": [],
+          "name": "CURRENT_ACCOUNT_PRODUCT",
+          "outputs": [
+               {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+               }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+     },
+     {
+          "inputs": [],
+          "name": "DEFAULT_CONFIG_SETTER",
+          "outputs": [
+               {
+                    "internalType": "bytes32",
+                    "name": "",
+                    "type": "bytes32"
+               }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+     },
+     {
+          "inputs": [],
+          "name": "GDN_TOKEN",
+          "outputs": [
+               {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+               }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+     },
+     {
+          "inputs": [],
+          "name": "GDN_TREASURY_WALLET",
+          "outputs": [
+               {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+               }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+     },
+     {
+          "inputs": [],
+          "name": "PAUSER",
+          "outputs": [
+               {
+                    "internalType": "bytes32",
+                    "name": "",
+                    "type": "bytes32"
+               }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+     },
+     {
+          "inputs": [],
+          "name": "PAYROLL_ADMIN",
+          "outputs": [
+               {
+                    "internalType": "bytes32",
+                    "name": "",
+                    "type": "bytes32"
+               }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+     },
+     {
+          "inputs": [],
+          "name": "ROLES_REGISTER",
+          "outputs": [
+               {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+               }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+     },
+     {
+          "inputs": [],
+          "name": "UPGRADER",
+          "outputs": [
+               {
+                    "internalType": "bytes32",
+                    "name": "",
+                    "type": "bytes32"
+               }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+     },
+     {
+          "inputs": [
+               {
+                    "internalType": "address",
+                    "name": "gdnTreasuryWallet",
+                    "type": "address"
+               },
+               {
+                    "internalType": "address",
+                    "name": "currentAccountProduct",
+                    "type": "address"
+               }
+          ],
+          "name": "initialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+     },
+     {
+          "inputs": [],
+          "name": "pause",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+     },
+     {
+          "inputs": [],
+          "name": "paused",
+          "outputs": [
+               {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+               }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+     },
+     {
+          "inputs": [
+               {
+                    "components": [
+                         {
+                              "internalType": "uint32",
+                              "name": "accountNumber",
+                              "type": "uint32"
+                         },
+                         {
+                              "internalType": "uint256",
+                              "name": "amount",
+                              "type": "uint256"
+                         }
+                    ],
+                    "internalType": "struct SalaryRecipient[]",
+                    "name": "recipients",
+                    "type": "tuple[]"
+               }
+          ],
+          "name": "payrollTransfer",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+     },
+     {
+          "inputs": [],
+          "name": "proxiableUUID",
+          "outputs": [
+               {
+                    "internalType": "bytes32",
+                    "name": "",
+                    "type": "bytes32"
+               }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+     },
+     {
+          "inputs": [
+               {
+                    "internalType": "address",
+                    "name": "treasuryWallet",
+                    "type": "address"
+               }
+          ],
+          "name": "setTreasuryWallet",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+     },
+     {
+          "inputs": [],
+          "name": "unpause",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+     },
+     {
+          "inputs": [
+               {
+                    "internalType": "address",
+                    "name": "newImplementation",
+                    "type": "address"
+               }
+          ],
+          "name": "upgradeTo",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+     },
+     {
+          "inputs": [
+               {
+                    "internalType": "address",
+                    "name": "newImplementation",
+                    "type": "address"
+               },
+               {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+               }
+          ],
+          "name": "upgradeToAndCall",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+     }
+]

@@ -300,7 +300,10 @@ const AddManualContractTab = () => {
                             error={invalid ? error?.message : undefined}
                             label="ABI name"
                             placeholder="Enter name"
-                            readOnly={watch("isSystem")}
+                            readOnly={
+                              watch("isSystem") ||
+                              !!abis.find((abi) => abi.uid === watch("abi"))
+                            }
                           />
                         )}
                       />
@@ -317,7 +320,10 @@ const AddManualContractTab = () => {
                             error={invalid ? error?.message : undefined}
                             placeholder="Enter file.json"
                             label="ABI / JSON Interface"
-                            readOnly={watch("isSystem")}
+                            readOnly={
+                              watch("isSystem") ||
+                              !!abis.find((abi) => abi.uid === watch("abi"))
+                            }
                           />
                         )}
                       />
@@ -395,10 +401,9 @@ const ContractItem = ({
   const [isShowDelete, setIsShowDelete] = useState<boolean>(false);
   const selector = useSelector((state: RootState) => state.selector);
   return (
-    <Group
+    <Box
       px="xl"
       pos="relative"
-      noWrap
       onMouseEnter={() => setIsShowDelete(true)}
       onMouseLeave={() => setIsShowDelete(false)}
     >
@@ -416,12 +421,14 @@ const ContractItem = ({
       )}
       {/* View network item */}
       <Group onClick={onSelect} noWrap sx={{ cursor: "pointer" }}>
-        <Jazzicon diameter={40} seed={jsNumberForAddress(contract.address)} />
+        <Box sx={{ flex: 1 }}>
+          <Jazzicon diameter={40} seed={jsNumberForAddress(contract.address)} />
+        </Box>
         <Box>
           <Text fw={contract.uid === uidActive ? 600 : 400} color="gray.7">
             {contract?.name}
           </Text>
-          <Text fz="sm" color="gray.5">
+          <Text fz="sm" color="gray.5" lineClamp={1}>
             {contract?.address}
           </Text>
         </Box>
@@ -434,10 +441,16 @@ const ContractItem = ({
       </Group>
       {/* Delete network item */}
       {!contract.isSystem && isShowDelete && (
-        <ActionIcon color="red" onClick={onDelete}>
+        <ActionIcon
+          color="red"
+          onClick={onDelete}
+          pos="absolute"
+          top={0}
+          right={-8}
+        >
           <IconTrash size="1.125rem" />
         </ActionIcon>
       )}
-    </Group>
+    </Box>
   );
 };
