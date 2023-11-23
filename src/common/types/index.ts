@@ -32,3 +32,19 @@ export interface DataLocal {
   contracts: ContractIF[];
   abis: AbiIF[];
 }
+
+export interface InputAbi {
+  internalType: string;
+  name: string;
+  type: string;
+  indexed?: boolean;
+}
+
+export interface AbiDecode {
+  type: "function" | "event" | "constructor";
+  name?: string;
+  stateMutability?: "nonpayable" | "pure" | "view";
+  inputs: Array<InputAbi>;
+  outputs?: Array<InputAbi>;
+  anonymous?: boolean;
+}

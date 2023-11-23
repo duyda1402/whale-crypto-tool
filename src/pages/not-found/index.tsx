@@ -1,6 +1,6 @@
 import React from "react";
 import ErrorLayout from "../../components/layout/ErrorLayout";
-import TitleRoot from "../../components/common-ui/TitleRoot";
+import TitleRoot from "../../components/atom-ui/TitleRoot";
 
 const NotFoundPage = () => {
   return (

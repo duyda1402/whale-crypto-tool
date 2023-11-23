@@ -1,6 +1,7 @@
 import {
   Center,
   Image,
+  Navbar,
   Stack,
   Tooltip,
   UnstyledButton,
@@ -87,7 +88,7 @@ const NavbarRoot = () => {
   ));
 
   return (
-    <nav className={classes.navbar}>
+    <Navbar className={classes.navbar}>
       <Center>
         <Link to={"/"}>
           <Image height={40} width={40} src={myLogo} alt="logo" />
@@ -103,7 +104,7 @@ const NavbarRoot = () => {
       <Stack justify="center" spacing={rem(4)}>
         <NavbarLink icon={IconLogout} label="Logout" />
       </Stack>
-    </nav>
+    </Navbar>
   );
 };
 

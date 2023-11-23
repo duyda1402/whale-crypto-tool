@@ -1,6 +1,6 @@
 import React from "react";
-import TitleRoot from "../../components/common-ui/TitleRoot";
-import HeaderRoot from "../../components/common-ui/HeaderRoot";
+import TitleRoot from "../../components/atom-ui/TitleRoot";
+import HeaderRoot from "../../components/atom-ui/HeaderRoot";
 import { Center, Container, Text } from "@mantine/core";
 
 function SettingPage() {

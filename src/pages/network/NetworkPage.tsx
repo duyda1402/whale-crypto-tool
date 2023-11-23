@@ -28,8 +28,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidV4 } from "uuid";
 
 import { NetworkIF } from "../../common/types";
-import HeaderRoot from "../../components/common-ui/HeaderRoot";
-import TitleRoot from "../../components/common-ui/TitleRoot";
+import HeaderRoot from "../../components/atom-ui/HeaderRoot";
+import TitleRoot from "../../components/atom-ui/TitleRoot";
 import { RootState } from "../../libs/store";
 import { actionSetNetworks } from "../../libs/store/reducers/source.slice";
 
@@ -71,7 +71,7 @@ function NetworkPage() {
     reset(network);
   }, []);
 
-  const handlerSubmit = useCallback((data: NetworkIF) => {
+  const onSubmit = useCallback((data: NetworkIF) => {
     const findIndex = networks.findIndex((network) => network.uid === data.uid);
     const curNetworks = lodash.cloneDeep(networks);
     if (findIndex === -1) {
@@ -153,7 +153,7 @@ function NetworkPage() {
               <Divider orientation="vertical" />
               {/* Form Edit and New */}
               <Stack miw="50%" p="md">
-                <form onSubmit={handleSubmit(handlerSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit)}>
                   <Stack>
                     <Controller
                       control={control}
