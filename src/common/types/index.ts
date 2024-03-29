@@ -19,6 +19,7 @@ export interface ContractIF {
   address: string;
   abi: string;
   isSystem?: boolean;
+  chainId: string;
 }
 export interface AbiIF {
   uid: string;

@@ -27,8 +27,7 @@ export const networkMockup = [
     uid: "54f1ef04-05a1-4d8a-81fd-7cb96d20b550",
     icon: iconPolygonMumbai,
     networkName: "Polygon Mumbai",
-    rpcUrl:
-      "https://thrumming-alpha-ensemble.matic-testnet.discover.quiknode.pro/2b56e549f5b335918acccab0818ac11791bb4fbd",
+    rpcUrl: "https://polygon-mumbai-bor.publicnode.com",
     chainId: 80001,
     currencySymbol: "MATIC",
     blockExplorerUrl: "https://mumbai.polygonscan.com",

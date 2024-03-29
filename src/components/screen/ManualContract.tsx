@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Button,
   Divider,
   Flex,
@@ -13,12 +14,12 @@ import {
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import lodash from "lodash";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { forwardRef, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidV4 } from "uuid";
 import { Notify } from "../../common/notify";
-import { ContractIF } from "../../common/types";
+import { ContractIF, NetworkIF } from "../../common/types";
 import { RootState } from "../../libs/store";
 import {
   actionSetAbis,
@@ -37,6 +38,7 @@ const ManualContractTab = ({}: Props) => {
   //State Init
   const contracts = useSelector((state: RootState) => state.source.contracts);
   const abis = useSelector((state: RootState) => state.source.abis);
+  const networks = useSelector((state: RootState) => state.source.networks);
   const [addressSelect, setAddressSelect] = useState<string>("");
   const dispatch = useDispatch();
   const [search, setSearch] = useState<string>("");
@@ -51,6 +53,7 @@ const ManualContractTab = ({}: Props) => {
         abi: uuidV4(),
         abiJson: "",
         abiName: "",
+        chainId: "",
       },
     });
 
@@ -64,6 +67,7 @@ const ManualContractTab = ({}: Props) => {
       abi: uuidV4(),
       abiJson: "",
       abiName: "",
+      chainId: "",
     });
   }, []);
 
@@ -84,6 +88,7 @@ const ManualContractTab = ({}: Props) => {
       address: data.address,
       abi: data.abi,
       isSystem: false,
+      chainId: data.chainId,
     };
     const curContract = lodash.cloneDeep(contracts);
     if (findIndex === -1) {
@@ -192,6 +197,36 @@ const ManualContractTab = ({}: Props) => {
           <Stack miw="50%" p="md">
             <form onSubmit={handleSubmit(handlerSubmit)}>
               <Stack>
+                <Controller
+                  control={control}
+                  name="chainId"
+                  rules={{ required: "Required" }}
+                  render={({ field, fieldState: { invalid, error } }) => (
+                    <Select
+                      label="Network"
+                      error={invalid ? error?.message : undefined}
+                      placeholder="Choose network"
+                      itemComponent={SelectItem}
+                      withAsterisk
+                      data={networks.map((network: NetworkIF) => ({
+                        value: network.chainId.toString(),
+                        label: network.networkName,
+                        image: network.icon,
+                        chainId: network.chainId,
+                      }))}
+                      {...field}
+                      searchable
+                      maxDropdownHeight={400}
+                      nothingFound="No data"
+                      filter={(value, item) =>
+                        (item?.label || "")
+                          .toLowerCase()
+                          .includes(value.toLowerCase().trim())
+                      }
+                    />
+                  )}
+                />
+
                 <Controller
                   control={control}
                   name="name"
@@ -335,3 +370,25 @@ const ManualContractTab = ({}: Props) => {
 };
 
 export default ManualContractTab;
+
+interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
+  image: string;
+  label: string;
+  chainId: string;
+}
+
+const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
+  ({ image, label, chainId, ...others }: ItemProps, ref) => (
+    <div ref={ref} {...others}>
+      <Group noWrap>
+        <Avatar radius={99} src={image} />
+        <div>
+          <Text size="sm">{label}</Text>
+          <Text size="xs" opacity={0.65}>
+            chainId: {chainId}
+          </Text>
+        </div>
+      </Group>
+    </div>
+  )
+);

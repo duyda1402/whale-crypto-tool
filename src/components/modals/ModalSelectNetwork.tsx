@@ -43,6 +43,7 @@ function ModalSelectNetwork({ onClose }: Props) {
         ethers.utils.hexlify(Number(network?.chainId))
       );
       const BLOCK_EXPLORER = network?.blockExplorerUrl;
+      const ICON_URL = network?.icon;
       try {
         await provider.send("wallet_switchEthereumChain", [
           {
@@ -64,6 +65,7 @@ function ModalSelectNetwork({ onClose }: Props) {
                   symbol: SYMBOL_NAME,
                   decimals: 18,
                 },
+                iconUrls: [ICON_URL],
                 blockExplorerUrls: [BLOCK_EXPLORER],
               },
             ]);

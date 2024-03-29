@@ -277,7 +277,31 @@ function NetworkPage() {
                             color="gray.7"
                             pos="absolute"
                             top={3}
-                            left={128}
+                            right={3}
+                          >
+                            (Optional)
+                          </Text>
+                        </Box>
+                      )}
+                    />
+
+                    <Controller
+                      control={control}
+                      name="icon"
+                      render={({ field }) => (
+                        <Box pos="relative">
+                          <TextInput
+                            {...field}
+                            label="Icon URL"
+                            placeholder="Enter value"
+                            readOnly={watch("isSystem")}
+                          />
+                          <Text
+                            fz="xs"
+                            color="gray.7"
+                            pos="absolute"
+                            top={3}
+                            right={3}
                           >
                             (Optional)
                           </Text>

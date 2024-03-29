@@ -45,7 +45,7 @@ const WriteReadMethodForm = ({
   }, [func]);
 
   const onSubmit = async (_data: any) => {
-    if (!network) {
+    if (!network || !window.ethereum) {
       return Notify.error(ErrorBlockChain[5002]);
     }
     if (!CONTRACT || !func.name) {
@@ -55,8 +55,11 @@ const WriteReadMethodForm = ({
     try {
       const abiObj = lodash.find(abis, { uid: CONTRACT?.abi });
       const ABI_USE = JSON.parse(abiObj?.payload || "[]");
-      const provider = new ethers.providers.JsonRpcProvider(network.rpcUrl);
-
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const curNetwork = await provider.getNetwork();
+      if (curNetwork.chainId.toString() !== CONTRACT.chainId?.toString()) {
+        return Notify.error(ErrorBlockChain[5001]);
+      }
       //Setting Input
       let inputs: any[] = [];
       const contract = new ethers.Contract(
@@ -64,7 +67,6 @@ const WriteReadMethodForm = ({
         ABI_USE,
         provider
       );
-      console.log(_data);
       func.inputs.forEach((input) => {
         inputs.push(lodash.get(_data, `${func.name}.${input.name}`));
       });

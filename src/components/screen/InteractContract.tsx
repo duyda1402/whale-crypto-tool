@@ -41,6 +41,9 @@ const InteractContract = ({}: Props) => {
   const [actionAbi, setActionAbi] = useState<AbiDecode[]>([]);
   const contracts = useSelector((state: RootState) => state.source.contracts);
   const abis = useSelector((state: RootState) => state.source.abis);
+  const networkSelect = useSelector(
+    (state: RootState) => state.selector.network
+  );
   const dispatch = useDispatch();
   const handlerChangeContract = useCallback(
     (value: string) => {
@@ -63,15 +66,19 @@ const InteractContract = ({}: Props) => {
           clearable
           onChange={handlerChangeContract}
           placeholder="Select contract"
-          nothingFound="Nobody here"
+          nothingFound="Nobody here. Please select a other network and try again!"
           maxDropdownHeight={400}
-          data={contracts.map((i) => ({
-            label: i.name,
-            name: i.name,
-            address: i.address,
-            key: i.uid,
-            value: i.uid,
-          }))}
+          data={contracts
+            .filter(
+              (c) => c.chainId.toString() === networkSelect?.chainId.toString()
+            )
+            .map((i) => ({
+              label: i.name,
+              name: i.name,
+              address: i.address,
+              key: i.uid,
+              value: i.uid,
+            }))}
           itemComponent={SelectItem}
           filter={(value, item) =>
             item.address.toLowerCase().includes(value.toLowerCase().trim()) ||
