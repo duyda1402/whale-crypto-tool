@@ -2,12 +2,13 @@ import { Box, Center, Group, Select, Stack, Tabs, Text } from "@mantine/core";
 import lodash from "lodash";
 import { forwardRef, useCallback, useState } from "react";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AbiDecode } from "../../common/types";
 import { RootState } from "../../libs/store";
 import EventABI from "../atom-ui/EventABI";
 import ReadABI from "../atom-ui/ReadABI";
 import WriteABI from "../atom-ui/WriteABI";
+import { actionSelectContract } from "../../libs/store/reducers/selector.slice";
 type Props = {};
 
 interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -40,13 +41,17 @@ const InteractContract = ({}: Props) => {
   const [actionAbi, setActionAbi] = useState<AbiDecode[]>([]);
   const contracts = useSelector((state: RootState) => state.source.contracts);
   const abis = useSelector((state: RootState) => state.source.abis);
-
-  const handlerChangeContract = useCallback((value: string) => {
-    const curContract = lodash.find(contracts, { uid: value });
-    const abi = lodash.find(abis, { uid: curContract?.abi });
-    const actions = JSON.parse(abi?.payload || "[]");
-    setActionAbi(actions);
-  }, []);
+  const dispatch = useDispatch();
+  const handlerChangeContract = useCallback(
+    (value: string) => {
+      const curContract = contracts.find((c) => c.uid === value) || null;
+      const abi = lodash.find(abis, { uid: curContract?.abi });
+      const actions = JSON.parse(abi?.payload || "[]");
+      setActionAbi(actions);
+      dispatch(actionSelectContract(curContract));
+    },
+    [contracts, abis]
+  );
 
   return (
     <Stack p="lg">

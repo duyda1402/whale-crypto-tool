@@ -34,15 +34,4 @@ export const networkMockup = [
     blockExplorerUrl: "https://mumbai.polygonscan.com",
     isSystem: false,
   },
-  {
-    uid: "b726a0e8-1073-4a8b-b8a2-d73552f97a6b",
-    icon: "",
-    networkName: "Cleo Network",
-    rpcUrl: "https://b22dadtubac-dev-l2-rpc.synodus.com",
-    chainId: 1302,
-    currencySymbol: "GDN",
-    blockExplorerUrl:
-      "https://b22dadtubac-dev-l2-blockscout-explorer.synodus.com",
-    isSystem: false,
-  },
 ];

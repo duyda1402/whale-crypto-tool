@@ -1,7 +1,8 @@
+import { Container } from "@mantine/core";
 import React from "react";
-import TitleRoot from "../../components/atom-ui/TitleRoot";
 import HeaderRoot from "../../components/atom-ui/HeaderRoot";
-import { Center, Container, Text } from "@mantine/core";
+import TitleRoot from "../../components/atom-ui/TitleRoot";
+import SettingABI from "../../components/screen/SettingABI";
 
 function AbiPage() {
   return (
@@ -10,11 +11,7 @@ function AbiPage() {
       {/* Header */}
       <HeaderRoot title="ABI" />
       <Container p="xl" fluid miw={700}>
-        <Center mih={300}>
-          <Text fz="xl" fw={600} color="gray.5">
-            Come soon!
-          </Text>
-        </Center>
+        <SettingABI />
       </Container>
     </React.Fragment>
   );

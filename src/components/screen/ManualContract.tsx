@@ -1,7 +1,6 @@
 import {
   Button,
   Divider,
-  Text,
   Flex,
   Group,
   JsonInput,
@@ -9,22 +8,23 @@ import {
   SimpleGrid,
   Stack,
   Tabs,
+  Text,
   TextInput,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { Controller, useForm } from "react-hook-form";
-import ContractItem from "../atom-ui/ContractItem";
-import { ContractIF } from "../../common/types";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../libs/store";
-import { useCallback, useEffect, useState } from "react";
-import { v4 as uuidV4 } from "uuid";
 import lodash from "lodash";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuidV4 } from "uuid";
+import { Notify } from "../../common/notify";
+import { ContractIF } from "../../common/types";
+import { RootState } from "../../libs/store";
 import {
   actionSetAbis,
   actionSetContracts,
 } from "../../libs/store/reducers/source.slice";
+import ContractItem from "../atom-ui/ContractItem";
 
 interface ContractForm extends ContractIF {
   abiJson: string;
@@ -37,6 +37,7 @@ const ManualContractTab = ({}: Props) => {
   //State Init
   const contracts = useSelector((state: RootState) => state.source.contracts);
   const abis = useSelector((state: RootState) => state.source.abis);
+  const [addressSelect, setAddressSelect] = useState<string>("");
   const dispatch = useDispatch();
   const [search, setSearch] = useState<string>("");
   // Hook Form Init
@@ -54,6 +55,7 @@ const ManualContractTab = ({}: Props) => {
     });
 
   const handlerNewContract = useCallback(() => {
+    setAddressSelect("");
     reset({
       uid: uuidV4(),
       name: "",
@@ -86,9 +88,11 @@ const ManualContractTab = ({}: Props) => {
     const curContract = lodash.cloneDeep(contracts);
     if (findIndex === -1) {
       dispatch(actionSetContracts(curContract.concat(dataContract)));
+      Notify.success("Created new contract successfully!");
     } else {
       curContract.splice(findIndex, 1, dataContract);
       dispatch(actionSetContracts(curContract));
+      Notify.success("Updated contract successfully!");
     }
     if (findAbiIndex === -1) {
       const curAbis = lodash.cloneDeep(abis);
@@ -102,6 +106,7 @@ const ManualContractTab = ({}: Props) => {
           })
         )
       );
+      Notify.success("Created new ABI successfully!");
     }
   }, []);
 
@@ -111,11 +116,13 @@ const ManualContractTab = ({}: Props) => {
       const curNetworks = lodash.cloneDeep(contracts);
       curNetworks.splice(findIndex, 1);
       dispatch(actionSetContracts(curNetworks));
+      Notify.success("Deleted contract successfully!");
     },
     [contracts]
   );
   const handlerSelect = useCallback((contract: ContractIF) => {
     const abi = abis.find((abi) => abi.uid === contract.abi);
+    setAddressSelect(contract.address);
     reset({ ...contract, abiName: abi?.name, abiJson: abi?.payload });
   }, []);
 
@@ -208,8 +215,11 @@ const ManualContractTab = ({}: Props) => {
                     required: "Required",
                     validate: {
                       addressExists: (v) =>
-                        !contracts.find((contract) => contract.address === v) ||
-                        "address exists",
+                        !contracts.find(
+                          (contract) =>
+                            contract.address === v &&
+                            contract.address !== addressSelect
+                        ) || "address exists",
                     },
                   }}
                   render={({ field, fieldState: { invalid, error } }) => (
@@ -300,20 +310,21 @@ const ManualContractTab = ({}: Props) => {
                     />
                   </Tabs.Panel>
                 </Tabs>
-
-                <SimpleGrid cols={2} mt="md">
-                  <Button
-                    radius="xl"
-                    variant="outline"
-                    h={44}
-                    onClick={() => handlerCancel(watch("uid"))}
-                  >
-                    Cancel
-                  </Button>
-                  <Button radius="xl" type="submit" h={44}>
-                    Save
-                  </Button>
-                </SimpleGrid>
+                {!watch("isSystem") && (
+                  <SimpleGrid cols={2} mt="md">
+                    <Button
+                      radius="xl"
+                      variant="outline"
+                      h={44}
+                      onClick={() => handlerCancel(watch("uid"))}
+                    >
+                      Cancel
+                    </Button>
+                    <Button radius="xl" type="submit" h={44}>
+                      Save
+                    </Button>
+                  </SimpleGrid>
+                )}
               </Stack>
             </form>
           </Stack>

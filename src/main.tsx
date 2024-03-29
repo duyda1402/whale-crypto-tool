@@ -17,8 +17,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         lineHeight: 1.4,
       }}
     >
-      <Notifications />
       <RouterProvider router={router} />
+
+      <Notifications position="top-right" />
     </MantineProvider>
   </Provider>
 );

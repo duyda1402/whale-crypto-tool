@@ -1,6 +1,4 @@
 import {
-  ActionIcon,
-  Avatar,
   Box,
   Button,
   Container,
@@ -14,21 +12,17 @@ import {
   TextInput,
   ThemeIcon,
 } from "@mantine/core";
-import {
-  IconAlertCircleFilled,
-  IconCheck,
-  IconLockCog,
-  IconSearch,
-  IconTrash,
-} from "@tabler/icons-react";
+import { IconAlertCircleFilled, IconSearch } from "@tabler/icons-react";
 import lodash from "lodash";
 import React, { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidV4 } from "uuid";
 
+import { Notify } from "../../common/notify";
 import { NetworkIF } from "../../common/types";
 import HeaderRoot from "../../components/atom-ui/HeaderRoot";
+import NetworkItem from "../../components/atom-ui/NetworkItem";
 import TitleRoot from "../../components/atom-ui/TitleRoot";
 import { RootState } from "../../libs/store";
 import { actionSetNetworks } from "../../libs/store/reducers/source.slice";
@@ -36,6 +30,7 @@ import { actionSetNetworks } from "../../libs/store/reducers/source.slice";
 function NetworkPage() {
   //State Init
   const [search, setSearch] = useState<string>("");
+  const [chainId, setChainId] = useState<string | number>("");
   const networks = useSelector((state: RootState) => state.source.networks);
   const dispatch = useDispatch();
   // Hook Form Init
@@ -54,6 +49,7 @@ function NetworkPage() {
   });
 
   const handlerNewNetwork = useCallback(() => {
+    setChainId("");
     reset({
       uid: uuidV4(),
       blockExplorerUrl: "",
@@ -68,6 +64,7 @@ function NetworkPage() {
   }, []);
 
   const handlerSelectNetwork = useCallback((network: NetworkIF) => {
+    setChainId(network.chainId);
     reset(network);
   }, []);
 
@@ -76,9 +73,11 @@ function NetworkPage() {
     const curNetworks = lodash.cloneDeep(networks);
     if (findIndex === -1) {
       dispatch(actionSetNetworks(curNetworks.concat(data)));
+      Notify.success("Created new network successfully!");
     } else {
       curNetworks.splice(findIndex, 1, data);
       dispatch(actionSetNetworks(curNetworks));
+      Notify.success("Updated network successfully!");
     }
   }, []);
 
@@ -95,6 +94,7 @@ function NetworkPage() {
       const curNetworks = lodash.cloneDeep(networks);
       curNetworks.splice(findIndex, 1);
       dispatch(actionSetNetworks(curNetworks));
+      Notify.success("Deleted network successfully!");
     },
     [networks]
   );
@@ -195,7 +195,10 @@ function NetworkPage() {
                         validate: {
                           chainIdExists: (v) =>
                             !networks.find(
-                              (network) => network.chainId === v
+                              (network) =>
+                                network.chainId === v &&
+                                network.chainId.toString() !==
+                                  chainId.toString()
                             ) || "Chain ID exists",
                         },
                       }}
@@ -319,61 +322,3 @@ function NetworkPage() {
 }
 
 export default NetworkPage;
-
-type NetworkItemProps = {
-  network: NetworkIF;
-  onSelect?: () => void;
-  uidActive?: string;
-  onDelete?: () => void;
-};
-const NetworkItem = ({
-  network,
-  onSelect,
-  uidActive,
-  onDelete,
-}: NetworkItemProps) => {
-  const [isShowDelete, setIsShowDelete] = useState<boolean>(false);
-  const selector = useSelector((state: RootState) => state.selector);
-  return (
-    <Group
-      px="xl"
-      pos="relative"
-      noWrap
-      onMouseEnter={() => setIsShowDelete(true)}
-      onMouseLeave={() => setIsShowDelete(false)}
-    >
-      {selector.network?.uid === network.uid && (
-        <ThemeIcon
-          pos="absolute"
-          top={0}
-          left={-8}
-          variant="outline"
-          color="green"
-          sx={{ borderWidth: 0 }}
-        >
-          <IconCheck size="1.25rem" />
-        </ThemeIcon>
-      )}
-      {/* View network item */}
-      <Group onClick={onSelect} noWrap sx={{ cursor: "pointer" }}>
-        <Avatar src={network?.icon} radius="xl" size="sm">
-          {network?.networkName?.at(0)?.toLocaleUpperCase()}
-        </Avatar>
-        <Text fw={network.uid === uidActive ? 600 : 400} color="gray.7">
-          {network?.networkName}
-        </Text>
-        {network?.isSystem && (
-          <ThemeIcon variant="outline" color="gray" sx={{ borderWidth: 0 }}>
-            <IconLockCog size="1rem" />
-          </ThemeIcon>
-        )}
-      </Group>
-      {/* Delete network item */}
-      {!network.isSystem && isShowDelete && (
-        <ActionIcon color="red" onClick={onDelete}>
-          <IconTrash size="1.125rem" />
-        </ActionIcon>
-      )}
-    </Group>
-  );
-};

@@ -9,6 +9,7 @@ import ManualContract from "../../components/screen/ManualContract";
 
 function ContractPage() {
   let [searchParams, setSearchParams] = useSearchParams();
+
   return (
     <React.Fragment>
       <TitleRoot title="Contract" />

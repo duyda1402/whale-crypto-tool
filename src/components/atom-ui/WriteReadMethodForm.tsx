@@ -8,13 +8,22 @@ import {
   Text,
   Tooltip,
   Textarea,
+  Badge,
+  CopyButton,
+  Loader,
 } from "@mantine/core";
 import { Buffer } from "buffer";
 import * as ethers from "ethers";
 import { Controller, useForm } from "react-hook-form";
 import IconMetaMask from "../../assets/metamask.svg";
 import { AbiDecode } from "../../common/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../libs/store";
+import { Notify } from "../../common/notify";
+import { ErrorBlockChain } from "../../common/enum/base";
+import lodash from "lodash";
+import { IconCheck, IconCopy } from "@tabler/icons-react";
 
 const WriteReadMethodForm = ({
   func,
@@ -25,8 +34,69 @@ const WriteReadMethodForm = ({
 }) => {
   const { control, watch, setValue, handleSubmit } = useForm<any>();
   const [tx, _setTx] = useState<any>(null);
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const network = useSelector((state: RootState) => state.selector.network);
+  const CONTRACT = useSelector((state: RootState) => state.selector.contract);
+  const abis = useSelector((state: RootState) => state.source.abis);
+
+  useEffect(() => {
+    setResult(null);
+  }, [func]);
+
+  const onSubmit = async (_data: any) => {
+    if (!network) {
+      return Notify.error(ErrorBlockChain[5002]);
+    }
+    if (!CONTRACT || !func.name) {
+      return Notify.error(ErrorBlockChain[9000]);
+    }
+    setLoading(() => true);
+    try {
+      const abiObj = lodash.find(abis, { uid: CONTRACT?.abi });
+      const ABI_USE = JSON.parse(abiObj?.payload || "[]");
+      const provider = new ethers.providers.JsonRpcProvider(network.rpcUrl);
+
+      //Setting Input
+      let inputs: any[] = [];
+      const contract = new ethers.Contract(
+        CONTRACT?.address,
+        ABI_USE,
+        provider
+      );
+      console.log(_data);
+      func.inputs.forEach((input) => {
+        inputs.push(lodash.get(_data, `${func.name}.${input.name}`));
+      });
+
+      if (func.name in contract.functions) {
+        const res = await contract?.[func.name](...inputs);
+        setResult(res);
+      }
+    } catch (err: any) {
+      Notify.error(err.message);
+    } finally {
+      setLoading(() => false);
+    }
+  };
+
+  const handlerSetWallet = async (inputName: string) => {
+    if (!network || !window.ethereum) {
+      return Notify.error(ErrorBlockChain[5002]);
+    }
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    window.myProvider = provider;
+    try {
+      await provider.send("wallet_requestPermissions", [
+        {
+          eth_accounts: {},
+        },
+      ]);
+      const signer = provider.getSigner();
+      setValue(inputName, await signer.getAddress());
+    } catch (err: any) {
+      Notify.error(err.message);
+    }
   };
 
   const convertTextToHex = (key: string) => {
@@ -44,102 +114,154 @@ const WriteReadMethodForm = ({
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack px="md">
         {/* Input List */}
-        {func?.inputs?.map((input, index: number) => {
-          return (
-            <Group key={index} align="end" noWrap pos="relative">
-              <Controller
-                control={control}
-                name={input.name}
-                rules={{
-                  required: "Required",
-                  validate: {
-                    address: (v) =>
-                      (input.type === "address" &&
-                        !ethers.utils.getAddress(v)) ||
-                      "Invalid address",
-                  },
-                }}
-                render={({ field, fieldState: { invalid, error } }) => (
-                  <TextInput
-                    w="100%"
-                    size="xs"
-                    label={`${input.name} (${input.type})`}
-                    {...field}
-                    error={invalid ? error?.message : undefined}
-                    placeholder={`${input.name} (${input.type})`}
-                    withAsterisk
-                  />
-                )}
-              />
 
-              {input.type === "address" && true && (
-                <Group pos="absolute" top={24} right={2}>
-                  <ActionIcon
-                    variant="outline"
-                    color="orange"
-                    sx={{ borderWidth: 0 }}
-                  >
-                    <Image
-                      height={18}
-                      width={18}
-                      src={IconMetaMask}
-                      alt="web3"
-                    />
-                  </ActionIcon>
-                </Group>
-              )}
-
-              {input.type?.startsWith("bytes") && (
-                <Tooltip
-                  label={
-                    input.type?.includes("[]")
-                      ? "Must be array of hex"
-                      : "Must be hex"
-                  }
-                >
-                  <Button
-                    pos="absolute"
-                    top={24}
-                    right={2}
-                    variant="subtle"
-                    compact
-                    onClick={() => convertTextToHex(input.name)}
-                  >
-                    hexlify
-                  </Button>
-                </Tooltip>
-              )}
-            </Group>
-          );
-        })}
         {/* Input Required */}
-        {func?.inputs?.length && (
-          <Text fz="xs" span color="gray.6">
-            [{" "}
-            <Text span color="red">
-              *
-            </Text>{" "}
-            = Required ]
-          </Text>
+        {func?.inputs?.length > 0 && (
+          <>
+            {func?.inputs?.map((input, index: number) => {
+              return (
+                <Group key={index} align="end" noWrap pos="relative">
+                  <Controller
+                    control={control}
+                    name={`${func.name}.${input.name}`}
+                    rules={{
+                      required: "Required",
+                      validate: {
+                        isAddress: (v) => {
+                          if (input.type === "address") {
+                            return (
+                              ethers.utils.isAddress(v) || "Invalid address"
+                            );
+                          } else {
+                            return true;
+                          }
+                        },
+                      },
+                    }}
+                    render={({ field, fieldState: { invalid, error } }) => (
+                      <TextInput
+                        w="100%"
+                        size="xs"
+                        label={`${input.name} (${input.type})`}
+                        {...field}
+                        error={invalid ? error?.message : undefined}
+                        placeholder={`${input.name} (${input.type})`}
+                        withAsterisk
+                      />
+                    )}
+                  />
+
+                  {input.type === "address" && (
+                    <Group pos="absolute" top={24} right={2}>
+                      <ActionIcon
+                        variant="outline"
+                        color="orange"
+                        sx={{ borderWidth: 0 }}
+                        onClick={() =>
+                          handlerSetWallet(`${func.name}.${input.name}`)
+                        }
+                      >
+                        <Image
+                          height={18}
+                          width={18}
+                          src={IconMetaMask}
+                          alt="web3"
+                        />
+                      </ActionIcon>
+                    </Group>
+                  )}
+
+                  {input.type?.startsWith("bytes") && (
+                    <Tooltip
+                      label={
+                        input.type?.includes("[]")
+                          ? "Must be array of hex"
+                          : "Must be hex"
+                      }
+                    >
+                      <Button
+                        pos="absolute"
+                        top={24}
+                        right={2}
+                        variant="subtle"
+                        compact
+                        onClick={() =>
+                          convertTextToHex(`${func.name}.${input.name}`)
+                        }
+                      >
+                        hexlify
+                      </Button>
+                    </Tooltip>
+                  )}
+                </Group>
+              );
+            })}
+            <Text fz="xs" span color="gray.6">
+              [{" "}
+              <Text span color="red">
+                *
+              </Text>{" "}
+              = Required ]
+            </Text>
+          </>
         )}
         {/* Input Option */}
 
         {/* Output List */}
         {func?.outputs?.length ? (
-          <div>
-            <Text fw={500} color="gray.7" my="md">
+          <Stack>
+            <Text fw={700} color="gray.7" fz="sm">
               Return values
             </Text>
-            <ol>
-              {func?.outputs?.map((obj: any) => {
-                return (
-                  <li key={obj.name}>
-                    {obj.name} ({obj.type})
-                  </li>
-                );
-              })}
-            </ol>
-          </div>
+            {loading ? (
+              <Loader size="sm" />
+            ) : (
+              <Stack>
+                {func?.outputs?.map((obj: any) => {
+                  return (
+                    <Group key={obj.name}>
+                      <Badge>{obj.type}</Badge>
+                      {(result || obj.type === "bool") && (
+                        <>
+                          <Text color="gray.8" fz="sm">
+                            {obj.name
+                              ? result?.[obj.name].toString()
+                              : result?.toString()}
+                          </Text>
+                          {obj.type !== "bool" && (
+                            <CopyButton
+                              value={
+                                obj.name
+                                  ? result?.[obj.name].toString()
+                                  : result?.toString()
+                              }
+                              timeout={1000}
+                            >
+                              {({ copied, copy }) => (
+                                <Tooltip
+                                  label={copied ? "Copied" : "Copy"}
+                                  withArrow
+                                  position="right"
+                                >
+                                  <ActionIcon
+                                    size="xs"
+                                    color={copied ? "teal" : "gray"}
+                                    onClick={copy}
+                                  >
+                                    {copied ? <IconCheck /> : <IconCopy />}
+                                  </ActionIcon>
+                                </Tooltip>
+                              )}
+                            </CopyButton>
+                          )}
+                        </>
+                      )}
+                    </Group>
+                  );
+                })}
+              </Stack>
+            )}
+          </Stack>
         ) : null}
         {tx && (
           <div>

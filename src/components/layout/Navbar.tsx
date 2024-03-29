@@ -22,6 +22,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { KEY_MENU_ACTIVE } from "../../common";
 import myLogo from "/logo.svg";
+import { PATH_ROUTER_BASE } from "../../common/enum/base";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
@@ -62,11 +63,23 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const mockMenu = [
-  { icon: IconAppsFilled, label: "Home", link: "/" },
-  { icon: IconAffiliateFilled, label: "Network", link: "/network" },
-  { icon: IconFileFilled, label: "Contract", link: "/contract" },
-  { icon: IconVersionsFilled, label: "ABI", link: "/abi" },
-  { icon: IconSettingsFilled, label: "Settings", link: "/setting" },
+  { icon: IconAppsFilled, label: "Home", link: PATH_ROUTER_BASE.HOME_PAGE },
+  {
+    icon: IconAffiliateFilled,
+    label: "Network",
+    link: PATH_ROUTER_BASE.NETWORK_PAGE,
+  },
+  {
+    icon: IconFileFilled,
+    label: "Contract",
+    link: PATH_ROUTER_BASE.CONTRACT_PAGE,
+  },
+  { icon: IconVersionsFilled, label: "ABI", link: PATH_ROUTER_BASE.ABI_PAGE },
+  {
+    icon: IconSettingsFilled,
+    label: "Settings",
+    link: PATH_ROUTER_BASE.SETTING_PAGE,
+  },
 ];
 
 const NavbarRoot = () => {
