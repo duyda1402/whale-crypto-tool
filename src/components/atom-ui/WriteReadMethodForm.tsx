@@ -231,52 +231,53 @@ const WriteReadMethodForm = ({
               <Loader size="sm" />
             ) : (
               <Stack>
-                {func?.outputs?.map((obj: any) => {
+                {func?.outputs?.map((output: any) => {
                   return (
-                    <Group key={obj.name}>
-                      <Badge>{obj.type}</Badge>
+                    <Group key={output.name}>
+                      <Badge>{output.type}</Badge>
                       {result !== null && result !== undefined && (
                         <>
-                          {obj.type === "bool" && (
+                          {output.type === "bool" && (
                             <Text color="gray.8" fz="sm">
-                              {obj.name
-                                ? result?.[obj.name]?.toString()
+                              {(func?.outputs || []).length > 1
+                                ? result?.[output.name]?.toString()
                                 : result?.toString()}
                             </Text>
                           )}
-                          {obj.type === "uint256" && (
+                          {output.type === "uint256" && (
                             <Text color="gray.8" fz="sm">
-                              {obj.name
-                                ? result?.[obj.name]?._hex
+                              {(func?.outputs || []).length > 1
+                                ? result?.[output.name]?._hex
                                 : result?._hex}
                             </Text>
                           )}
-                          {obj.type !== "bool" && obj.type !== "uint256" && (
-                            <CopyButton
-                              value={
-                                obj.name
-                                  ? result?.[obj.name]?.toString()
-                                  : result?.toString()
-                              }
-                              timeout={1000}
-                            >
-                              {({ copied, copy }) => (
-                                <Tooltip
-                                  label={copied ? "Copied" : "Copy"}
-                                  withArrow
-                                  position="right"
-                                >
-                                  <ActionIcon
-                                    size="xs"
-                                    color={copied ? "teal" : "gray"}
-                                    onClick={copy}
+                          {output.type !== "bool" &&
+                            output.type !== "uint256" && (
+                              <CopyButton
+                                value={
+                                  (func?.outputs || []).length > 1
+                                    ? result?.[output.name]?.toString()
+                                    : result?.toString()
+                                }
+                                timeout={1000}
+                              >
+                                {({ copied, copy }) => (
+                                  <Tooltip
+                                    label={copied ? "Copied" : "Copy"}
+                                    withArrow
+                                    position="right"
                                   >
-                                    {copied ? <IconCheck /> : <IconCopy />}
-                                  </ActionIcon>
-                                </Tooltip>
-                              )}
-                            </CopyButton>
-                          )}
+                                    <ActionIcon
+                                      size="xs"
+                                      color={copied ? "teal" : "gray"}
+                                      onClick={copy}
+                                    >
+                                      {copied ? <IconCheck /> : <IconCopy />}
+                                    </ActionIcon>
+                                  </Tooltip>
+                                )}
+                              </CopyButton>
+                            )}
                         </>
                       )}
                     </Group>
