@@ -286,7 +286,7 @@ const WriteReadMethodForm = ({
           </div>
         )}
         <Group>
-          <Button size="xs" type="submit" color="violet">
+          <Button size="xs" type="submit" color="violet" loading={loading}>
             {label}
           </Button>
         </Group>
