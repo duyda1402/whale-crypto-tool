@@ -84,7 +84,7 @@ const WriteReadMethodForm = ({
         } else {
           res = await contract?.[func.name](...inputs);
         }
-        console.log("tx", res);
+        console.log("tx", func.type, res);
         setResult(res);
       }
     } catch (err: any) {
@@ -246,7 +246,9 @@ const WriteReadMethodForm = ({
                           )}
                           {obj.type === "uint256" && (
                             <Text color="gray.8" fz="sm">
-                              {obj.name ? result?.[obj.name] : result}
+                              {obj.name
+                                ? result?.[obj.name]?._hex
+                                : result?._hex}
                             </Text>
                           )}
                           {obj.type !== "bool" && obj.type !== "uint256" && (
