@@ -57,7 +57,7 @@ const WriteReadMethodForm = ({
       const ABI_USE = JSON.parse(abiObj?.payload || "[]");
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const curNetwork = await provider.getNetwork();
-      if (curNetwork.chainId.toString() !== CONTRACT.chainId?.toString()) {
+      if (curNetwork?.chainId?.toString() !== CONTRACT.chainId?.toString()) {
         return Notify.error(ErrorBlockChain[5001]);
       }
       //Setting Input
@@ -239,14 +239,14 @@ const WriteReadMethodForm = ({
                         <>
                           <Text color="gray.8" fz="sm">
                             {obj.name
-                              ? result?.[obj.name].toString()
+                              ? result?.[obj.name]?.toString()
                               : result?.toString()}
                           </Text>
                           {obj.type !== "bool" && (
                             <CopyButton
                               value={
                                 obj.name
-                                  ? result?.[obj.name].toString()
+                                  ? result?.[obj.name]?.toString()
                                   : result?.toString()
                               }
                               timeout={1000}
