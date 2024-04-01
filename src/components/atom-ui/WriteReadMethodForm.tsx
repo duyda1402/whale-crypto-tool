@@ -244,7 +244,12 @@ const WriteReadMethodForm = ({
                                 : result?.toString()}
                             </Text>
                           )}
-                          {obj.type !== "bool" && (
+                          {obj.type === "uint256" && (
+                            <Text color="gray.8" fz="sm">
+                              {obj.name ? result?.[obj.name] : result}
+                            </Text>
+                          )}
+                          {obj.type !== "bool" && obj.type !== "uint256" && (
                             <CopyButton
                               value={
                                 obj.name
