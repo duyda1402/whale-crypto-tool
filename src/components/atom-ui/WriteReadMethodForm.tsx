@@ -72,7 +72,19 @@ const WriteReadMethodForm = ({
       });
 
       if (func.name in contract.functions) {
-        const res = await contract?.[func.name](...inputs);
+        let res: any;
+        if (func.stateMutability === "nonpayable") {
+          await provider.send("wallet_requestPermissions", [
+            {
+              eth_accounts: {},
+            },
+          ]);
+          const signer = provider.getSigner();
+          res = await contract.connect(signer)?.[func.name](...inputs);
+        } else {
+          res = await contract?.[func.name](...inputs);
+        }
+
         setResult(res);
       }
     } catch (err: any) {
