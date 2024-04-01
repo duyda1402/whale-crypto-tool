@@ -235,13 +235,15 @@ const WriteReadMethodForm = ({
                   return (
                     <Group key={obj.name}>
                       <Badge>{obj.type}</Badge>
-                      {(result || obj.type === "bool") && (
+                      {result !== null && result !== undefined && (
                         <>
-                          <Text color="gray.8" fz="sm">
-                            {obj.name
-                              ? result?.[obj.name]?.toString()
-                              : result?.toString()}
-                          </Text>
+                          {obj.type === "bool" && (
+                            <Text color="gray.8" fz="sm">
+                              {obj.name
+                                ? result?.[obj.name]?.toString()
+                                : result?.toString()}
+                            </Text>
+                          )}
                           {obj.type !== "bool" && (
                             <CopyButton
                               value={
