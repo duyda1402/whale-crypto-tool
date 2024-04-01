@@ -84,7 +84,7 @@ const WriteReadMethodForm = ({
         } else {
           res = await contract?.[func.name](...inputs);
         }
-
+        console.log("tx", res);
         setResult(res);
       }
     } catch (err: any) {
