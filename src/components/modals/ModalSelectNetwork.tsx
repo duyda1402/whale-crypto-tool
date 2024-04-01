@@ -14,6 +14,8 @@ import {
   actionLoadingNetwork,
   actionSelectNetwork,
 } from "../../libs/store/reducers/selector.slice";
+import { switchChain } from "@wagmi/core";
+import { wagmiConfig } from "../../main";
 
 type Props = {
   onClose: () => void;
@@ -45,11 +47,7 @@ function ModalSelectNetwork({ onClose }: Props) {
       const BLOCK_EXPLORER = network?.blockExplorerUrl;
       const ICON_URL = network?.icon;
       try {
-        await provider.send("wallet_switchEthereumChain", [
-          {
-            chainId: CHAIN_ID,
-          },
-        ]);
+        await switchChain(wagmiConfig, { chainId: Number(network?.chainId) });
         dispatch(actionSelectNetwork(network));
         return onClose();
       } catch (err: any) {
@@ -79,6 +77,9 @@ function ModalSelectNetwork({ onClose }: Props) {
         } else if (err.code === 4001) {
           Notify.error(ErrorBlockChain[4001]);
         }
+      } finally {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        window.myProvider = provider;
       }
     } else {
       Notify.error(ErrorBlockChain[9999]);

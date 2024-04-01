@@ -15,7 +15,9 @@ import { ModalsProvider } from "@mantine/modals";
 const RootLayout = () => {
   const location = useLocation();
   const { pathname } = location;
-  const networks = useSelector((state: RootState) => state.source.networks);
+  const networks =
+    useSelector((state: RootState) => state.source.networks) || [];
+
   const dispatch = useDispatch();
   useEffect(() => {
     const keyActive = pathname.split("/")[1] || "$home";
@@ -32,6 +34,7 @@ const RootLayout = () => {
       if (network) {
         dispatch(actionSelectNetwork(network));
         Notify.success(`Connected to ${network.networkName} network`);
+        window.myProvider = provider;
       } else {
         Notify.warn("Connected to unknown network");
       }

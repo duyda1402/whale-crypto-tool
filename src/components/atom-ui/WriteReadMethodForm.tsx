@@ -74,11 +74,6 @@ const WriteReadMethodForm = ({
       if (func.name in contract.functions) {
         let res: any;
         if (func.stateMutability === "nonpayable") {
-          await provider.send("wallet_requestPermissions", [
-            {
-              eth_accounts: {},
-            },
-          ]);
           const signer = provider.getSigner();
           res = await contract.connect(signer)?.[func.name](...inputs);
         } else {
@@ -128,8 +123,6 @@ const WriteReadMethodForm = ({
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack px="md">
         {/* Input List */}
-
-        {/* Input Required */}
         {func?.inputs?.length > 0 && (
           <>
             {func?.inputs?.map((input, index: number) => {
@@ -210,16 +203,8 @@ const WriteReadMethodForm = ({
                 </Group>
               );
             })}
-            <Text fz="xs" span color="gray.6">
-              [{" "}
-              <Text span color="red">
-                *
-              </Text>{" "}
-              = Required ]
-            </Text>
           </>
         )}
-        {/* Input Option */}
 
         {/* Output List */}
         {func?.outputs?.length ? (
@@ -234,7 +219,7 @@ const WriteReadMethodForm = ({
                 {func?.outputs?.map((output: any) => {
                   return (
                     <Group key={output.name}>
-                      <Badge>{output.type}</Badge>
+                      <Badge size="sm">{output.type}</Badge>
                       {result !== null && result !== undefined && (
                         <>
                           {output.type === "bool" && (
@@ -253,30 +238,37 @@ const WriteReadMethodForm = ({
                           )}
                           {output.type !== "bool" &&
                             output.type !== "uint256" && (
-                              <CopyButton
-                                value={
-                                  (func?.outputs || []).length > 1
+                              <>
+                                <Text color="gray.8" fz="sm">
+                                  {(func?.outputs || []).length > 1
                                     ? result?.[output.name]?.toString()
-                                    : result?.toString()
-                                }
-                                timeout={1000}
-                              >
-                                {({ copied, copy }) => (
-                                  <Tooltip
-                                    label={copied ? "Copied" : "Copy"}
-                                    withArrow
-                                    position="right"
-                                  >
-                                    <ActionIcon
-                                      size="xs"
-                                      color={copied ? "teal" : "gray"}
-                                      onClick={copy}
+                                    : result?.toString()}
+                                </Text>
+                                <CopyButton
+                                  value={
+                                    (func?.outputs || []).length > 1
+                                      ? result?.[output.name]?.toString()
+                                      : result?.toString()
+                                  }
+                                  timeout={1000}
+                                >
+                                  {({ copied, copy }) => (
+                                    <Tooltip
+                                      label={copied ? "Copied" : "Copy"}
+                                      withArrow
+                                      position="right"
                                     >
-                                      {copied ? <IconCheck /> : <IconCopy />}
-                                    </ActionIcon>
-                                  </Tooltip>
-                                )}
-                              </CopyButton>
+                                      <ActionIcon
+                                        size="xs"
+                                        color={copied ? "teal" : "gray"}
+                                        onClick={copy}
+                                      >
+                                        {copied ? <IconCheck /> : <IconCopy />}
+                                      </ActionIcon>
+                                    </Tooltip>
+                                  )}
+                                </CopyButton>
+                              </>
                             )}
                         </>
                       )}
