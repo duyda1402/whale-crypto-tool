@@ -25,7 +25,11 @@ import HeaderRoot from "../../components/atom-ui/HeaderRoot";
 import NetworkItem from "../../components/atom-ui/NetworkItem";
 import TitleRoot from "../../components/atom-ui/TitleRoot";
 import { RootState } from "../../libs/store";
-import { actionSetNetworks } from "../../libs/store/reducers/source.slice";
+import {
+  actionAddNetworks,
+  actionRemoveNetworks,
+  actionUpdateNetworks,
+} from "../../libs/store/reducers/source.slice";
 
 function NetworkPage() {
   //State Init
@@ -70,13 +74,16 @@ function NetworkPage() {
 
   const onSubmit = useCallback((data: NetworkIF) => {
     const findIndex = networks.findIndex((network) => network.uid === data.uid);
-    const curNetworks = lodash.cloneDeep(networks);
     if (findIndex === -1) {
-      dispatch(actionSetNetworks(curNetworks.concat(data)));
+      dispatch(actionAddNetworks(data));
       Notify.success("Created new network successfully!");
     } else {
-      curNetworks.splice(findIndex, 1, data);
-      dispatch(actionSetNetworks(curNetworks));
+      dispatch(
+        actionUpdateNetworks({
+          uid: data.uid,
+          network: data,
+        })
+      );
       Notify.success("Updated network successfully!");
     }
   }, []);
@@ -90,10 +97,18 @@ function NetworkPage() {
 
   const handlerDelete = useCallback(
     (uid: string) => {
-      const findIndex = networks.findIndex((network) => network.uid === uid);
-      const curNetworks = lodash.cloneDeep(networks);
-      curNetworks.splice(findIndex, 1);
-      dispatch(actionSetNetworks(curNetworks));
+      dispatch(actionRemoveNetworks(uid));
+      reset({
+        uid: uuidV4(),
+        blockExplorerUrl: "",
+        chainId: "",
+        connectionInfo: undefined,
+        icon: "",
+        currencySymbol: "",
+        isSystem: false,
+        rpcUrl: "",
+        networkName: "",
+      });
       Notify.success("Deleted network successfully!");
     },
     [networks]
@@ -155,6 +170,9 @@ function NetworkPage() {
               <Stack miw="50%" p="md">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <Stack>
+                    <Text fz="xs" color="gray.5">
+                      UID: {watch("uid")}
+                    </Text>
                     <Controller
                       control={control}
                       name="networkName"

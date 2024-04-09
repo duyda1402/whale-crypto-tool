@@ -45,22 +45,107 @@ export const sourceSlice = createSlice({
   initialState,
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
-    actionSetNetworks: (state, action: PayloadAction<NetworkIF[]>) => {
-      state.networks = action.payload;
-      setDataLocal("networks", action.payload);
+    actionAddNetworks: (state, action: PayloadAction<NetworkIF>) => {
+      state.networks.push(action.payload);
+      setDataLocal("networks", state.networks);
     },
-    actionSetContracts: (state, action: PayloadAction<ContractIF[]>) => {
-      state.contracts = action.payload;
-      setDataLocal("contracts", action.payload);
+
+    actionUpdateNetworks: (
+      state,
+      action: PayloadAction<{ uid: string; network: NetworkIF }>
+    ) => {
+      const curNetworks = lodash.cloneDeep(state.networks);
+      const index = curNetworks.findIndex((e) => e.uid === action.payload.uid);
+      if (index !== -1) {
+        curNetworks.splice(index, 1, action.payload.network);
+      }
+      state.networks = curNetworks;
+      setDataLocal("networks", curNetworks);
     },
+
+    actionRemoveNetworks: (state, action: PayloadAction<string>) => {
+      const curNetworks = lodash.cloneDeep(state.networks);
+      const index = curNetworks.findIndex((e) => e.uid === action.payload);
+      if (index !== -1) {
+        curNetworks.splice(index, 1);
+      }
+      state.networks = curNetworks;
+      setDataLocal("networks", curNetworks);
+    },
+
+    actionAddContracts: (state, action: PayloadAction<ContractIF>) => {
+      state.contracts.push(action.payload);
+      setDataLocal("contracts", state.contracts);
+    },
+
+    actionUpdateContracts: (
+      state,
+      action: PayloadAction<{ uid: string; data: ContractIF }>
+    ) => {
+      const curContracts = lodash.cloneDeep(state.contracts);
+      const index = curContracts.findIndex((e) => e.uid === action.payload.uid);
+      if (index !== -1) {
+        curContracts.splice(index, 1, action.payload.data);
+      }
+      state.contracts = curContracts;
+      setDataLocal("contracts", curContracts);
+    },
+
+    actionRemoveContracts: (state, action: PayloadAction<string>) => {
+      const curContracts = lodash.cloneDeep(state.contracts);
+      const index = curContracts.findIndex((e) => e.uid === action.payload);
+      if (index !== -1) {
+        curContracts.splice(index, 1);
+      }
+      state.contracts = curContracts;
+      setDataLocal("contracts", curContracts);
+    },
+
     actionSetAbis: (state, action: PayloadAction<AbiIF[]>) => {
       state.abis = action.payload;
       setDataLocal("abis", action.payload);
     },
+
+    actionAddAbis: (state, action: PayloadAction<AbiIF>) => {
+      state.abis.push(action.payload);
+      setDataLocal("abis", state.abis);
+    },
+
+    actionUpdateAbis: (
+      state,
+      action: PayloadAction<{ uid: string; data: AbiIF }>
+    ) => {
+      const curAbis = lodash.cloneDeep(state.abis);
+      const index = curAbis.findIndex((e) => e.uid === action.payload.uid);
+      if (index !== -1) {
+        curAbis.splice(index, 1, action.payload.data);
+      }
+      state.abis = curAbis;
+      setDataLocal("abis", curAbis);
+    },
+
+    actionRemoveAbis: (state, action: PayloadAction<string>) => {
+      const curAbis = lodash.cloneDeep(state.abis);
+      const index = curAbis.findIndex((e) => e.uid === action.payload);
+      if (index !== -1) {
+        curAbis.splice(index, 1);
+      }
+      state.abis = curAbis;
+      setDataLocal("abis", curAbis);
+    },
   },
 });
 
-export const { actionSetNetworks, actionSetContracts, actionSetAbis } =
-  sourceSlice.actions;
+export const {
+  actionRemoveNetworks,
+  actionUpdateNetworks,
+  actionAddNetworks,
+  actionAddContracts,
+  actionUpdateContracts,
+  actionRemoveContracts,
+  actionAddAbis,
+  actionUpdateAbis,
+  actionRemoveAbis,
+} = sourceSlice.actions;
 
 export const sourceReducer = sourceSlice.reducer;

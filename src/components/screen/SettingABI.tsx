@@ -27,7 +27,11 @@ import { v4 as uuidV4 } from "uuid";
 import { Notify } from "../../common/notify";
 import { AbiIF } from "../../common/types";
 import { RootState } from "../../libs/store";
-import { actionSetAbis } from "../../libs/store/reducers/source.slice";
+import {
+  actionAddAbis,
+  actionRemoveAbis,
+  actionUpdateAbis,
+} from "../../libs/store/reducers/source.slice";
 
 type Props = {};
 
@@ -65,13 +69,12 @@ const SettingABI = ({}: Props) => {
         isSystem: data.isSystem,
       };
       const findAbiIndex = abis.findIndex((abi) => abi.uid === data.uid);
-      const curAbis = lodash.cloneDeep(abis);
+
       if (findAbiIndex !== -1) {
-        curAbis.splice(findAbiIndex, 1, dataABI);
-        dispatch(actionSetAbis(curAbis));
+        dispatch(actionUpdateAbis({ uid: dataABI.uid, data: dataABI }));
         Notify.success("Updated ABI successfully!");
       } else {
-        dispatch(actionSetAbis(curAbis.concat(dataABI)));
+        dispatch(actionAddAbis(dataABI));
         Notify.success("Created new ABI successfully!");
       }
     },
@@ -80,12 +83,11 @@ const SettingABI = ({}: Props) => {
 
   const handlerDelete = useCallback(
     (uid: string) => {
-      const findIndex = abis.findIndex((abi) => abi.uid === uid);
-      const curAbis = lodash.cloneDeep(abis);
-      curAbis.splice(findIndex, 1);
-      dispatch(actionSetAbis(curAbis));
+      dispatch(actionRemoveAbis(uid));
       Notify.success("Deleted ABI successfully!");
+      return handlerNewABI();
     },
+
     [contracts]
   );
   const handlerSelect = useCallback(
@@ -161,6 +163,9 @@ const SettingABI = ({}: Props) => {
           {/* Form Edit and New */}
           <Stack miw="50%" p="md">
             <form onSubmit={handleSubmit(handlerSubmit)}>
+              <Text fz="xs" color="gray.5">
+                UID: {watch("uid")}
+              </Text>
               <Stack>
                 <Controller
                   control={control}

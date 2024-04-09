@@ -22,8 +22,10 @@ import { Notify } from "../../common/notify";
 import { ContractIF, NetworkIF } from "../../common/types";
 import { RootState } from "../../libs/store";
 import {
-  actionSetAbis,
-  actionSetContracts,
+  actionAddAbis,
+  actionAddContracts,
+  actionRemoveContracts,
+  actionUpdateContracts,
 } from "../../libs/store/reducers/source.slice";
 import ContractItem from "../atom-ui/ContractItem";
 
@@ -90,26 +92,23 @@ const ManualContractTab = ({}: Props) => {
       isSystem: false,
       chainId: data.chainId,
     };
-    const curContract = lodash.cloneDeep(contracts);
     if (findIndex === -1) {
-      dispatch(actionSetContracts(curContract.concat(dataContract)));
+      dispatch(actionAddContracts(dataContract));
       Notify.success("Created new contract successfully!");
     } else {
-      curContract.splice(findIndex, 1, dataContract);
-      dispatch(actionSetContracts(curContract));
+      dispatch(
+        actionUpdateContracts({ uid: dataContract.uid, data: dataContract })
+      );
       Notify.success("Updated contract successfully!");
     }
     if (findAbiIndex === -1) {
-      const curAbis = lodash.cloneDeep(abis);
       dispatch(
-        actionSetAbis(
-          curAbis.concat({
-            uid: data.abi,
-            name: data.abiName,
-            payload: data.abiJson,
-            isSystem: false,
-          })
-        )
+        actionAddAbis({
+          uid: data.abi,
+          name: data.abiName,
+          payload: data.abiJson,
+          isSystem: false,
+        })
       );
       Notify.success("Created new ABI successfully!");
     }
@@ -117,11 +116,9 @@ const ManualContractTab = ({}: Props) => {
 
   const handlerDelete = useCallback(
     (uid: string) => {
-      const findIndex = contracts.findIndex((contract) => contract.uid === uid);
-      const curNetworks = lodash.cloneDeep(contracts);
-      curNetworks.splice(findIndex, 1);
-      dispatch(actionSetContracts(curNetworks));
+      dispatch(actionRemoveContracts(uid));
       Notify.success("Deleted contract successfully!");
+      return handlerNewContract();
     },
     [contracts]
   );
@@ -197,6 +194,9 @@ const ManualContractTab = ({}: Props) => {
           <Stack miw="50%" p="md">
             <form onSubmit={handleSubmit(handlerSubmit)}>
               <Stack>
+                <Text fz="xs" color="gray.5">
+                  UID: {watch("uid")}
+                </Text>
                 <Controller
                   control={control}
                   name="chainId"
