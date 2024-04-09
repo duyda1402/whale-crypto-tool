@@ -233,9 +233,17 @@ const WriteReadMethodForm = ({
                           {output.type === "uint256" && (
                             <>
                               {ethers.BigNumber.isBigNumber(
-                                result?.[output.name]
+                                (func?.outputs || []).length > 1
+                                  ? result?.[output.name]
+                                  : result
                               ) && (
-                                <ViewBigNumber value={result?.[output.name]} />
+                                <ViewBigNumber
+                                  value={
+                                    (func?.outputs || []).length > 1
+                                      ? result?.[output.name]
+                                      : result
+                                  }
+                                />
                               )}
                             </>
                           )}
