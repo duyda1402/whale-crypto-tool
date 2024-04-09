@@ -11,6 +11,8 @@ import RootSelector from "./RootSelector";
 import { actionSelectNetwork } from "../../libs/store/reducers/selector.slice";
 import { ErrorBlockChain } from "../../common/enum/base";
 import { ModalsProvider } from "@mantine/modals";
+import RootTool from "./RootTool";
+import ModalDecoderData from "../modals/ModalDecoderData";
 
 const RootLayout = () => {
   const location = useLocation();
@@ -48,7 +50,9 @@ const RootLayout = () => {
   }, []);
 
   return (
-    <ModalsProvider>
+    <ModalsProvider
+      modals={{ modalDecoderData: ModalDecoderData /* ...other modals */ }}
+    >
       <AppShell
         navbar={<NavbarRoot />}
         styles={(theme) => ({
@@ -62,6 +66,9 @@ const RootLayout = () => {
       >
         <Box pos="fixed" right={0} top="20%" sx={{ zIndex: 100 }}>
           <RootSelector />
+        </Box>
+        <Box pos="fixed" right={32} bottom={28} sx={{ zIndex: 100 }}>
+          <RootTool />
         </Box>
         <Container
           size="xl"

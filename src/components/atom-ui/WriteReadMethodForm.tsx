@@ -24,6 +24,7 @@ import { Notify } from "../../common/notify";
 import { ErrorBlockChain } from "../../common/enum/base";
 import lodash from "lodash";
 import { IconCheck, IconCopy } from "@tabler/icons-react";
+import ViewBigNumber from "./ViewBigNumber";
 
 const WriteReadMethodForm = ({
   func,
@@ -230,11 +231,13 @@ const WriteReadMethodForm = ({
                             </Text>
                           )}
                           {output.type === "uint256" && (
-                            <Text color="gray.8" fz="sm">
-                              {(func?.outputs || []).length > 1
-                                ? result?.[output.name]?._hex
-                                : result?._hex}
-                            </Text>
+                            <>
+                              {ethers.BigNumber.isBigNumber(
+                                result?.[output.name]
+                              ) && (
+                                <ViewBigNumber value={result?.[output.name]} />
+                              )}
+                            </>
                           )}
                           {output.type !== "bool" &&
                             output.type !== "uint256" && (
