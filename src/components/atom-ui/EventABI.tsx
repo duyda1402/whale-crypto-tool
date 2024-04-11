@@ -53,7 +53,7 @@ function EventABI({ events }: Props) {
               <Accordion.Panel>
                 <Center mih={100}>
                   <Text fz="sm" fw={600} color="gray.5">
-                    Come soon!
+                    Coming soon!
                   </Text>
                 </Center>
               </Accordion.Panel>

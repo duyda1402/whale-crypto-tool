@@ -1,4 +1,4 @@
-import { AppShell, Box, Container, ScrollArea } from "@mantine/core";
+import { AppShell, Box, Container, Group, ScrollArea } from "@mantine/core";
 import { Outlet, useLocation } from "react-router-dom";
 import NavbarRoot from "./Navbar";
 import { useEffect } from "react";
@@ -13,6 +13,7 @@ import { ErrorBlockChain } from "../../common/enum/base";
 import { ModalsProvider } from "@mantine/modals";
 import RootTool from "./RootTool";
 import ModalDecoderData from "../modals/ModalDecoderData";
+import Footer from "./Footer";
 
 const RootLayout = () => {
   const location = useLocation();
@@ -78,7 +79,7 @@ const RootLayout = () => {
         >
           <ScrollArea
             sx={(theme) => ({
-              height: "100%",
+              height: "97%",
               backgroundColor:
                 theme.colorScheme === "dark" ? theme.colors.dark[6] : "#fff",
               boxShadow: theme.shadows.lg,
@@ -86,6 +87,9 @@ const RootLayout = () => {
           >
             <Outlet />
           </ScrollArea>
+          <Group position="center" py="xs">
+            <Footer />
+          </Group>
         </Container>
       </AppShell>
     </ModalsProvider>

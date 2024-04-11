@@ -52,7 +52,7 @@ function ContractPage() {
           <Tabs.Panel value="deploy" pt="xs">
             <Center mih={300}>
               <Text fz="xl" fw={600} color="gray.5">
-                Come soon!
+                Coming soon!
               </Text>
             </Center>
           </Tabs.Panel>

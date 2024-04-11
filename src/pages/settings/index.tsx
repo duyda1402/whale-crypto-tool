@@ -12,7 +12,7 @@ function SettingPage() {
       <Container p="xl" fluid miw={700}>
         <Center mih={300}>
           <Text fz="xl" fw={600} color="gray.5">
-            Come soon!
+            Coming soon!
           </Text>
         </Center>
       </Container>
