@@ -26,7 +26,7 @@ const ModalExportStore = ({}: Props) => {
     } else {
       NotifySystem.error("Not data store");
     }
-  }, []);
+  }, [store]);
 
   return (
     <Stack p="md" spacing="md">
