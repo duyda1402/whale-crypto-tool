@@ -59,7 +59,6 @@ const ModalImportStore = ({}: Props) => {
         try {
           const jsonString = e.target.result;
           const jsonObject = JSON.parse(jsonString) as DataLocal;
-          console.log(jsonObject);
           MyDataSchema.parse(jsonObject);
           dispatch(actionSetAbis(jsonObject?.abis || []));
           dispatch(actionSetContracts(jsonObject?.contracts || []));
@@ -78,7 +77,7 @@ const ModalImportStore = ({}: Props) => {
       };
 
       reader.onerror = function (e: any) {
-        console.error("File could not be read:", e.target.error);
+        NotifySystem.error("File could not be read: " + e?.target?.error);
       };
 
       reader.readAsText(file);

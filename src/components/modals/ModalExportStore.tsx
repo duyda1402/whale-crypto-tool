@@ -2,26 +2,30 @@ import { Button, Group, Stack, Text, Textarea } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 import { KEY_DATA_LOCALE } from "../../common";
 import { ContextModalProps } from "@mantine/modals";
+import { NotifySystem } from "../../common/notify";
 
 type Props = ContextModalProps<{ modalBody: string }>;
 
 const ModalExportStore = ({}: Props) => {
-  const [store, setStore] = useState();
+  const [store, setStore] = useState<string | null>(null);
 
   useEffect(() => {
     const localStore = localStorage.getItem(KEY_DATA_LOCALE);
-    setStore(JSON.parse(localStore || "{}"));
+    setStore(localStore);
   }, []);
 
   const handlerDownload = useCallback(() => {
-    const jsonString = JSON.stringify(store);
-    const blob = new Blob([jsonString], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${import.meta.env.VITE_APP_TITLE}_${Date.now()}`;
-    a.click();
-    URL.revokeObjectURL(url);
+    if (store) {
+      const blob = new Blob([store], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${import.meta.env.VITE_APP_TITLE}_${Date.now()}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      NotifySystem.error("Not data store");
+    }
   }, []);
 
   return (
