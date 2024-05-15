@@ -35,7 +35,8 @@
     "viem": "^2.9.6",
     "wagmi": "^2.5.16",
     "web3": "^4.1.2",
-    "zksync-web3": "^0.14.3"
+    "zksync-web3": "^0.14.3",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.202",

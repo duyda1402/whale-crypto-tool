@@ -24,7 +24,7 @@ import React, { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidV4 } from "uuid";
-import { Notify } from "../../common/notify";
+import { NotifySystem } from "../../common/notify";
 import { AbiIF } from "../../common/types";
 import { RootState } from "../../libs/store";
 import {
@@ -72,10 +72,10 @@ const SettingABI = ({}: Props) => {
 
       if (findAbiIndex !== -1) {
         dispatch(actionUpdateAbis({ uid: dataABI.uid, data: dataABI }));
-        Notify.success("Updated ABI successfully!");
+        NotifySystem.success("Updated ABI successfully!");
       } else {
         dispatch(actionAddAbis(dataABI));
-        Notify.success("Created new ABI successfully!");
+        NotifySystem.success("Created new ABI successfully!");
       }
     },
     [abis]
@@ -84,7 +84,7 @@ const SettingABI = ({}: Props) => {
   const handlerDelete = useCallback(
     (uid: string) => {
       dispatch(actionRemoveAbis(uid));
-      Notify.success("Deleted ABI successfully!");
+      NotifySystem.success("Deleted ABI successfully!");
       return handlerNewABI();
     },
 

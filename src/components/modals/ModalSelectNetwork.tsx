@@ -7,7 +7,7 @@ import { RootState } from "../../libs/store";
 import NetworkItem from "../atom-ui/NetworkItem";
 import { NetworkIF } from "../../common/types";
 import { ethers } from "ethers";
-import { Notify } from "../../common/notify";
+import { NotifySystem } from "../../common/notify";
 import { ErrorBlockChain, PATH_ROUTER_BASE } from "../../common/enum/base";
 import { useNavigate } from "react-router-dom";
 import {
@@ -71,18 +71,18 @@ function ModalSelectNetwork({ onClose }: Props) {
             return onClose();
           } catch (err: any) {
             if (err.code === 4001) {
-              Notify.error(ErrorBlockChain[4001]);
+              NotifySystem.error(ErrorBlockChain[4001]);
             }
           }
         } else if (err.code === 4001) {
-          Notify.error(ErrorBlockChain[4001]);
+          NotifySystem.error(ErrorBlockChain[4001]);
         }
       } finally {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         window.myProvider = provider;
       }
     } else {
-      Notify.error(ErrorBlockChain[9999]);
+      NotifySystem.error(ErrorBlockChain[9999]);
     }
   };
 

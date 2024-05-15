@@ -5,7 +5,7 @@ import { notifications } from "@mantine/notifications";
 
 // }
 
-export class Notify {
+export class NotifySystem {
   static success = (message: string) => {
     notifications.show({
       message: message,

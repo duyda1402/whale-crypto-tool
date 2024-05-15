@@ -19,7 +19,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidV4 } from "uuid";
 
-import { Notify } from "../../common/notify";
+import { NotifySystem } from "../../common/notify";
 import { NetworkIF } from "../../common/types";
 import HeaderRoot from "../../components/atom-ui/HeaderRoot";
 import NetworkItem from "../../components/atom-ui/NetworkItem";
@@ -76,7 +76,7 @@ function NetworkPage() {
     const findIndex = networks.findIndex((network) => network.uid === data.uid);
     if (findIndex === -1) {
       dispatch(actionAddNetworks(data));
-      Notify.success("Created new network successfully!");
+      NotifySystem.success("Created new network successfully!");
     } else {
       dispatch(
         actionUpdateNetworks({
@@ -84,7 +84,7 @@ function NetworkPage() {
           network: data,
         })
       );
-      Notify.success("Updated network successfully!");
+      NotifySystem.success("Updated network successfully!");
     }
   }, []);
 
@@ -109,7 +109,7 @@ function NetworkPage() {
         rpcUrl: "",
         networkName: "",
       });
-      Notify.success("Deleted network successfully!");
+      NotifySystem.success("Deleted network successfully!");
     },
     [networks]
   );

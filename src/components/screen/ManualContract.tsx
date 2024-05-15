@@ -18,7 +18,7 @@ import React, { forwardRef, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidV4 } from "uuid";
-import { Notify } from "../../common/notify";
+import { NotifySystem } from "../../common/notify";
 import { ContractIF, NetworkIF } from "../../common/types";
 import { RootState } from "../../libs/store";
 import {
@@ -94,12 +94,12 @@ const ManualContractTab = ({}: Props) => {
     };
     if (findIndex === -1) {
       dispatch(actionAddContracts(dataContract));
-      Notify.success("Created new contract successfully!");
+      NotifySystem.success("Created new contract successfully!");
     } else {
       dispatch(
         actionUpdateContracts({ uid: dataContract.uid, data: dataContract })
       );
-      Notify.success("Updated contract successfully!");
+      NotifySystem.success("Updated contract successfully!");
     }
     if (findAbiIndex === -1) {
       dispatch(
@@ -110,14 +110,14 @@ const ManualContractTab = ({}: Props) => {
           isSystem: false,
         })
       );
-      Notify.success("Created new ABI successfully!");
+      NotifySystem.success("Created new ABI successfully!");
     }
   }, []);
 
   const handlerDelete = useCallback(
     (uid: string) => {
       dispatch(actionRemoveContracts(uid));
-      Notify.success("Deleted contract successfully!");
+      NotifySystem.success("Deleted contract successfully!");
       return handlerNewContract();
     },
     [contracts]

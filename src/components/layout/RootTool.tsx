@@ -53,6 +53,14 @@ const RootTool = ({}: Props) => {
 
           <Tooltip label="Convert Number" position="left">
             <ActionIcon
+              onClick={() =>
+                modals.openContextModal({
+                  modal: "modalConvertNumber",
+                  title: <Title order={3}>Input Decoder Data</Title>,
+                  innerProps: {},
+                  size: "xl",
+                })
+              }
               variant="light"
               radius="xl"
               color="blue"

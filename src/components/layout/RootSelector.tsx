@@ -90,9 +90,10 @@ const RootSelector = ({}: Props) => {
             </ActionIcon>
           </Tooltip>
         )}
+        {}
         <Box
           sx={{
-            display: isHoverNetwork ? "block" : "none",
+            display: isHoverNetwork && network ? "block" : "none",
           }}
         >
           <Text size="sm">{network?.networkName}</Text>

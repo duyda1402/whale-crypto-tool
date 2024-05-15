@@ -20,7 +20,7 @@ import { AbiDecode } from "../../common/types";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../libs/store";
-import { Notify } from "../../common/notify";
+import { NotifySystem } from "../../common/notify";
 import { ErrorBlockChain } from "../../common/enum/base";
 import lodash from "lodash";
 import { IconCheck, IconCopy } from "@tabler/icons-react";
@@ -47,10 +47,10 @@ const WriteReadMethodForm = ({
 
   const onSubmit = async (_data: any) => {
     if (!network || !window.ethereum) {
-      return Notify.error(ErrorBlockChain[5002]);
+      return NotifySystem.error(ErrorBlockChain[5002]);
     }
     if (!CONTRACT || !func.name) {
-      return Notify.error(ErrorBlockChain[9000]);
+      return NotifySystem.error(ErrorBlockChain[9000]);
     }
     setLoading(() => true);
     try {
@@ -59,7 +59,7 @@ const WriteReadMethodForm = ({
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const curNetwork = await provider.getNetwork();
       if (curNetwork?.chainId?.toString() !== CONTRACT.chainId?.toString()) {
-        return Notify.error(ErrorBlockChain[5001]);
+        return NotifySystem.error(ErrorBlockChain[5001]);
       }
       //Setting Input
       let inputs: any[] = [];
@@ -84,7 +84,7 @@ const WriteReadMethodForm = ({
         setResult(res);
       }
     } catch (err: any) {
-      Notify.error(err.message);
+      NotifySystem.error(err.message);
     } finally {
       setLoading(() => false);
     }
@@ -92,7 +92,7 @@ const WriteReadMethodForm = ({
 
   const handlerSetWallet = async (inputName: string) => {
     if (!network || !window.ethereum) {
-      return Notify.error(ErrorBlockChain[5002]);
+      return NotifySystem.error(ErrorBlockChain[5002]);
     }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     window.myProvider = provider;
@@ -105,7 +105,7 @@ const WriteReadMethodForm = ({
       const signer = provider.getSigner();
       setValue(inputName, await signer.getAddress());
     } catch (err: any) {
-      Notify.error(err.message);
+      NotifySystem.error(err.message);
     }
   };
 

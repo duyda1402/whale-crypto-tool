@@ -11,7 +11,7 @@ export default function ViewBigNumber({ value }: Props) {
   const [until, setUntil] = useState<number>(-1);
   return (
     <Group>
-      {until > 0 ? (
+      {until >= 0 ? (
         <Text color="violet.8" fs="italic" fz="sm">
           {ethers.utils.formatUnits(value, until)}
         </Text>
@@ -28,6 +28,7 @@ export default function ViewBigNumber({ value }: Props) {
         </Menu.Target>
 
         <Menu.Dropdown>
+          <Menu.Item onClick={() => setUntil(0)}>wei</Menu.Item>
           <Menu.Item onClick={() => setUntil(6)}>mwei</Menu.Item>
           <Menu.Item onClick={() => setUntil(9)}>gwei</Menu.Item>
           <Menu.Item onClick={() => setUntil(18)}>ether</Menu.Item>

@@ -3,7 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import NavbarRoot from "./Navbar";
 import { useEffect } from "react";
 import { KEY_MENU_ACTIVE } from "../../common";
-import { Notify } from "../../common/notify";
+import { NotifySystem } from "../../common/notify";
 import { ethers } from "ethers";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../libs/store";
@@ -14,6 +14,10 @@ import { ModalsProvider } from "@mantine/modals";
 import RootTool from "./RootTool";
 import ModalDecoderData from "../modals/ModalDecoderData";
 import Footer from "./Footer";
+import ModalExportStore from "../modals/ModalExportStore";
+import ModalImportStore from "../modals/ModalImportStore";
+import ModalResetStore from "../modals/ModalResetStore";
+import ModalConvertNumber from "../modals/ModalConvertNumber";
 
 const RootLayout = () => {
   const location = useLocation();
@@ -36,13 +40,13 @@ const RootLayout = () => {
       );
       if (network) {
         dispatch(actionSelectNetwork(network));
-        Notify.success(`Connected to ${network.networkName} network`);
+        NotifySystem.success(`Connected to ${network.networkName} network`);
         window.myProvider = provider;
       } else {
-        Notify.warn("Connected to unknown network");
+        NotifySystem.warn("Connected to unknown network");
       }
     } else {
-      Notify.warn(ErrorBlockChain[9999]);
+      NotifySystem.warn(ErrorBlockChain[9999]);
     }
   };
 
@@ -52,7 +56,13 @@ const RootLayout = () => {
 
   return (
     <ModalsProvider
-      modals={{ modalDecoderData: ModalDecoderData /* ...other modals */ }}
+      modals={{
+        modalDecoderData: ModalDecoderData,
+        modalExportStore: ModalExportStore /* ...other modals */,
+        modalImportStore: ModalImportStore,
+        modalResetStore: ModalResetStore,
+        modalConvertNumber: ModalConvertNumber,
+      }}
     >
       <AppShell
         navbar={<NavbarRoot />}

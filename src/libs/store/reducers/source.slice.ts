@@ -15,14 +15,17 @@ interface SourceState {
   abis: AbiIF[];
 }
 
+const storeMockup = {
+  version: import.meta.env.BASE_URL || "v1.0.0",
+  networks: networkMockup,
+  contracts: contractsMockup,
+  abis: abisMockup,
+};
+
 const getDataLocal = (): DataLocal => {
   const dataStr = localStorage.getItem(KEY_DATA_LOCALE);
   if (!dataStr) {
-    return {
-      networks: networkMockup,
-      contracts: contractsMockup,
-      abis: abisMockup,
-    };
+    return storeMockup;
   }
   return JSON.parse(dataStr);
 };
@@ -34,7 +37,7 @@ const setDataLocal = (path: string, data: any): void => {
 };
 // Define the initial state using that type
 const initialState: SourceState = {
-  version: "v1.0.0",
+  version: import.meta.env.BASE_URL || "v1.0.0",
   networks: getDataLocal().networks,
   contracts: getDataLocal().contracts,
   abis: getDataLocal().abis,
@@ -44,6 +47,19 @@ export const sourceSlice = createSlice({
   name: "source",
   initialState,
   reducers: {
+    actionResetStore: (state) => {
+      state.abis = storeMockup.abis;
+      state.contracts = storeMockup.contracts;
+      state.networks = storeMockup.networks;
+      setDataLocal("networks", storeMockup.networks);
+      setDataLocal("contracts", storeMockup.contracts);
+      setDataLocal("abis", storeMockup.abis);
+    },
+
+    actionSetNetworks: (state, action: PayloadAction<NetworkIF[]>) => {
+      state.networks = action.payload;
+      setDataLocal("networks", action.payload);
+    },
     // Use the PayloadAction type to declare the contents of `action.payload`
     actionAddNetworks: (state, action: PayloadAction<NetworkIF>) => {
       state.networks.push(action.payload);
@@ -71,6 +87,11 @@ export const sourceSlice = createSlice({
       }
       state.networks = curNetworks;
       setDataLocal("networks", curNetworks);
+    },
+
+    actionSetContracts: (state, action: PayloadAction<ContractIF[]>) => {
+      state.contracts = action.payload;
+      setDataLocal("contracts", action.payload);
     },
 
     actionAddContracts: (state, action: PayloadAction<ContractIF>) => {
@@ -137,6 +158,9 @@ export const sourceSlice = createSlice({
 });
 
 export const {
+  actionResetStore,
+  actionSetContracts,
+  actionSetNetworks,
   actionRemoveNetworks,
   actionUpdateNetworks,
   actionAddNetworks,
@@ -144,6 +168,7 @@ export const {
   actionUpdateContracts,
   actionRemoveContracts,
   actionAddAbis,
+  actionSetAbis,
   actionUpdateAbis,
   actionRemoveAbis,
 } = sourceSlice.actions;
