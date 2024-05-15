@@ -3,12 +3,13 @@ import lodash from "lodash";
 import { forwardRef, useCallback, useState } from "react";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import { useDispatch, useSelector } from "react-redux";
+import { useChainId } from "wagmi";
 import { AbiDecode } from "../../common/types";
 import { RootState } from "../../libs/store";
+import { actionSelectContract } from "../../libs/store/reducers/selector.slice";
 import EventABI from "../atom-ui/EventABI";
 import ReadABI from "../atom-ui/ReadABI";
 import WriteABI from "../atom-ui/WriteABI";
-import { actionSelectContract } from "../../libs/store/reducers/selector.slice";
 type Props = {};
 
 interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -41,10 +42,10 @@ const InteractContract = ({}: Props) => {
   const [actionAbi, setActionAbi] = useState<AbiDecode[]>([]);
   const contracts = useSelector((state: RootState) => state.source.contracts);
   const abis = useSelector((state: RootState) => state.source.abis);
-  const networkSelect = useSelector(
-    (state: RootState) => state.selector.network
-  );
   const dispatch = useDispatch();
+
+  const chainId = useChainId();
+
   const handlerChangeContract = useCallback(
     (value: string) => {
       const curContract = contracts.find((c) => c.uid === value) || null;
@@ -69,9 +70,7 @@ const InteractContract = ({}: Props) => {
           nothingFound="Nobody here. Please select a other network and try again!"
           maxDropdownHeight={400}
           data={contracts
-            .filter(
-              (c) => c.chainId.toString() === networkSelect?.chainId.toString()
-            )
+            .filter((c) => c.chainId.toString() === chainId.toString())
             .map((i) => ({
               label: i.name,
               name: i.name,

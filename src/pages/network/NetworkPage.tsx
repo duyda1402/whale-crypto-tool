@@ -30,6 +30,7 @@ import {
   actionRemoveNetworks,
   actionUpdateNetworks,
 } from "../../libs/store/reducers/source.slice";
+import { useSwitchChain } from "wagmi";
 
 function NetworkPage() {
   //State Init
@@ -37,6 +38,7 @@ function NetworkPage() {
   const [chainId, setChainId] = useState<string | number>("");
   const networks = useSelector((state: RootState) => state.source.networks);
   const dispatch = useDispatch();
+  const { switchChain } = useSwitchChain();
   // Hook Form Init
   const { control, watch, reset, handleSubmit } = useForm<NetworkIF>({
     defaultValues: {
@@ -75,6 +77,7 @@ function NetworkPage() {
   const onSubmit = useCallback((data: NetworkIF) => {
     const findIndex = networks.findIndex((network) => network.uid === data.uid);
     if (findIndex === -1) {
+      switchChain({ chainId: +data.chainId });
       dispatch(actionAddNetworks(data));
       NotifySystem.success("Created new network successfully!");
     } else {

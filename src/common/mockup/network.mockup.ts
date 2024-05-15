@@ -1,6 +1,5 @@
 import iconEthereum from "../../assets/eth_logo.png";
 import iconPolygon from "../../assets/matic-token.png";
-import iconPolygonMumbai from "../../assets/matic-test.png";
 
 export const networkMockup = [
   {
@@ -22,15 +21,5 @@ export const networkMockup = [
     currencySymbol: "MATIC",
     blockExplorerUrl: "https://polygonscan.com",
     isSystem: true,
-  },
-  {
-    uid: "54f1ef04-05a1-4d8a-81fd-7cb96d20b550",
-    icon: iconPolygonMumbai,
-    networkName: "Polygon Mumbai",
-    rpcUrl: "https://polygon-mumbai-bor.publicnode.com",
-    chainId: 80001,
-    currencySymbol: "MATIC",
-    blockExplorerUrl: "https://mumbai.polygonscan.com",
-    isSystem: false,
   },
 ];

@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  Avatar,
   Box,
   Group,
   Loader,
@@ -8,32 +7,26 @@ import {
   Text,
   Tooltip,
 } from "@mantine/core";
-import { modals } from "@mantine/modals";
-import { IconCurrencyEthereum, IconTopologyStar3 } from "@tabler/icons-react";
+import { IconCurrencyEthereum } from "@tabler/icons-react";
 import { getBalance } from "@wagmi/core";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useEffect, useState } from "react";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
-import { useSelector } from "react-redux";
-import { useAccount } from "wagmi";
-import { RootState } from "../../libs/store";
+import { useAccount, useChainId } from "wagmi";
 import { wagmiConfig } from "../../main";
 import { shortenString } from "../../ultis";
-import ModalSelectNetwork from "../modals/ModalSelectNetwork";
 
 type Props = {};
 
 const RootSelector = ({}: Props) => {
-  const network = useSelector((state: RootState) => state.selector.network);
-  const [isHoverNetwork, setIsHoverNetwork] = useState<boolean>(false);
+  // const [isHoverNetwork, setIsHoverNetwork] = useState<boolean>(false);
   const [isHoverAccount, setIsHoverWallet] = useState<boolean>(false);
-  const isLoadingNetwork = useSelector(
-    (state: RootState) => state.selector.isLoadingNetwork
-  );
   const [balance, setBalance] = useState<string>("0");
 
   const { address, status } = useAccount();
   const { open: openModalConnect } = useWeb3Modal();
+
+  const chainId = useChainId();
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -48,17 +41,10 @@ const RootSelector = ({}: Props) => {
     fetchBalance();
   }, [address]);
 
-  const openModalSelectNetwork = () =>
-    modals.open({
-      title: "Select a network",
-      children: <ModalSelectNetwork onClose={modals.closeAll} />,
-    });
-
   return (
     <Stack align="flex-end">
       {/* Network */}
-      <Group
-        onClick={openModalSelectNetwork}
+      {/* <Group
         onMouseLeave={() => setIsHoverNetwork(false)}
         onMouseEnter={() => setIsHoverNetwork(true)}
         bg="white"
@@ -75,9 +61,7 @@ const RootSelector = ({}: Props) => {
           transitionDuration: "500ms",
         })}
       >
-        {isLoadingNetwork ? (
-          <Loader />
-        ) : network ? (
+        {chainId ? (
           <Tooltip label={network.networkName} position="right">
             <Avatar radius={99} src={network?.icon}>
               {network?.networkName?.at(0)}
@@ -90,7 +74,7 @@ const RootSelector = ({}: Props) => {
             </ActionIcon>
           </Tooltip>
         )}
-        {}
+      
         <Box
           sx={{
             display: isHoverNetwork && network ? "block" : "none",
@@ -101,7 +85,7 @@ const RootSelector = ({}: Props) => {
             chainId: {network?.chainId}
           </Text>
         </Box>
-      </Group>
+      </Group> */}
       {/* connect wallet */}
       <Group
         onClick={() => openModalConnect()}
@@ -132,20 +116,23 @@ const RootSelector = ({}: Props) => {
           </Tooltip>
         )}
         {status === "connecting" || (status === "reconnecting" && <Loader />)}
-        <Box
-          sx={{
-            maxWidth: "200px",
-            display:
-              isHoverAccount && status === "connected" ? "block" : "none",
-          }}
-        >
-          <Text size="sm" lineClamp={1}>
-            {shortenString(address || "", 18)}
-          </Text>
-          <Text size="xs" opacity={0.65}>
-            Balance: {balance}
-          </Text>
-        </Box>
+        <Tooltip label={`Chain Id: ${chainId}`} position="bottom-start">
+          <Box
+            sx={{
+              maxWidth: "200px",
+              display:
+                isHoverAccount && status === "connected" ? "block" : "none",
+            }}
+          >
+            <Text size="sm" lineClamp={1}>
+              {shortenString(address || "", 18)}
+            </Text>
+            <Text size="xs" opacity={0.65}>
+              Balance: {balance}
+            </Text>
+            <Text size="xs" opacity={0.65}></Text>
+          </Box>
+        </Tooltip>
       </Group>
     </Stack>
   );

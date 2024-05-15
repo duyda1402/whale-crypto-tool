@@ -56,7 +56,7 @@ const RootTool = ({}: Props) => {
               onClick={() =>
                 modals.openContextModal({
                   modal: "modalConvertNumber",
-                  title: <Title order={3}>Input Decoder Data</Title>,
+                  title: <Title order={3}>Convert Number</Title>,
                   innerProps: {},
                   size: "xl",
                 })

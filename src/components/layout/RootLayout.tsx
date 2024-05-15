@@ -1,31 +1,46 @@
 import { AppShell, Box, Container, Group, ScrollArea } from "@mantine/core";
-import { Outlet, useLocation } from "react-router-dom";
-import NavbarRoot from "./Navbar";
-import { useEffect } from "react";
-import { KEY_MENU_ACTIVE } from "../../common";
-import { NotifySystem } from "../../common/notify";
-import { ethers } from "ethers";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../libs/store";
-import RootSelector from "./RootSelector";
-import { actionSelectNetwork } from "../../libs/store/reducers/selector.slice";
-import { ErrorBlockChain } from "../../common/enum/base";
 import { ModalsProvider } from "@mantine/modals";
-import RootTool from "./RootTool";
+import { useWeb3ModalTheme } from "@web3modal/wagmi/react";
+import { ethers } from "ethers";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Outlet, useLocation } from "react-router-dom";
+import { useChainId } from "wagmi";
+import { KEY_MENU_ACTIVE } from "../../common";
+import { ErrorBlockChain } from "../../common/enum/base";
+import { NotifySystem } from "../../common/notify";
+import { RootState } from "../../libs/store";
+import { actionSelectNetwork } from "../../libs/store/reducers/selector.slice";
+import ModalConvertNumber from "../modals/ModalConvertNumber";
 import ModalDecoderData from "../modals/ModalDecoderData";
-import Footer from "./Footer";
 import ModalExportStore from "../modals/ModalExportStore";
 import ModalImportStore from "../modals/ModalImportStore";
 import ModalResetStore from "../modals/ModalResetStore";
-import ModalConvertNumber from "../modals/ModalConvertNumber";
+import Footer from "./Footer";
+import NavbarRoot from "./Navbar";
+import RootSelector from "./RootSelector";
+import RootTool from "./RootTool";
 
 const RootLayout = () => {
+  const { setThemeMode, setThemeVariables } = useWeb3ModalTheme();
+
+  useEffect(() => {
+    setThemeMode("light");
+    setThemeVariables({
+      "--w3m-color-mix": "#f1f5f9",
+      "--w3m-color-mix-strength": 40,
+    });
+  }, []);
+
   const location = useLocation();
   const { pathname } = location;
+
   const networks =
     useSelector((state: RootState) => state.source.networks) || [];
 
+  const chainId = useChainId();
   const dispatch = useDispatch();
+
   useEffect(() => {
     const keyActive = pathname.split("/")[1] || "$home";
     localStorage.setItem(KEY_MENU_ACTIVE, keyActive);
@@ -34,9 +49,8 @@ const RootLayout = () => {
   const connectProvider = async () => {
     if (window.ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const networkByProvider = await provider.getNetwork();
       const network = networks.find(
-        (n) => n.chainId.toString() === networkByProvider.chainId.toString()
+        (n) => n.chainId.toString() === chainId.toString()
       );
       if (network) {
         dispatch(actionSelectNetwork(network));
