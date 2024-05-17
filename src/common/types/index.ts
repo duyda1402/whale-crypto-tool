@@ -28,10 +28,17 @@ export interface AbiIF {
   isSystem?: boolean;
 }
 
+export interface EnvIF {
+  uid: string;
+  name: string;
+}
+
 export interface DataLocal {
   networks: NetworkIF[];
   contracts: ContractIF[];
   abis: AbiIF[];
+  envs: EnvIF[];
+  version: string;
 }
 
 export interface InputAbi {

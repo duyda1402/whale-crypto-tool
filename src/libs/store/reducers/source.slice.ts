@@ -1,11 +1,15 @@
-import lodash from "lodash";
-import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { AbiIF, ContractIF, DataLocal, NetworkIF } from "../../../common/types";
+import { createSlice } from "@reduxjs/toolkit";
+import lodash from "lodash";
 import { KEY_DATA_LOCALE } from "../../../common";
-import { networkMockup } from "../../../common/mockup/network.mockup";
-import { abisMockup } from "../../../common/mockup/abis.mockup";
-import { contractsMockup } from "../../../common/mockup/contracts.mockup";
+import { STORE_MOCKUP } from "../../../common/mockup";
+import {
+  AbiIF,
+  ContractIF,
+  DataLocal,
+  EnvIF,
+  NetworkIF,
+} from "../../../common/types";
 
 // Define a type for the slice state
 interface SourceState {
@@ -13,25 +17,20 @@ interface SourceState {
   networks: NetworkIF[];
   contracts: ContractIF[];
   abis: AbiIF[];
+  envs: EnvIF[];
 }
-
-const storeMockup = {
-  version: import.meta.env.BASE_URL || "v1.0.0",
-  networks: networkMockup,
-  contracts: contractsMockup,
-  abis: abisMockup,
-};
 
 const getDataLocal = (): DataLocal => {
   const dataStr = localStorage.getItem(KEY_DATA_LOCALE);
   if (!dataStr) {
-    return storeMockup;
+    return STORE_MOCKUP;
   }
   return JSON.parse(dataStr);
 };
 
 const setDataLocal = (path: string, data: any): void => {
-  const curData = lodash.cloneDeep(getDataLocal());
+  const dataStr = localStorage.getItem(KEY_DATA_LOCALE) || "{}";
+  const curData = { ...JSON.parse(dataStr) };
   lodash.set(curData, path, data);
   localStorage.setItem(KEY_DATA_LOCALE, JSON.stringify(curData));
 };
@@ -41,6 +40,7 @@ const initialState: SourceState = {
   networks: getDataLocal().networks,
   contracts: getDataLocal().contracts,
   abis: getDataLocal().abis,
+  envs: getDataLocal().envs,
 };
 
 export const sourceSlice = createSlice({
@@ -48,14 +48,27 @@ export const sourceSlice = createSlice({
   initialState,
   reducers: {
     actionResetStore: (state) => {
-      state.abis = storeMockup.abis;
-      state.contracts = storeMockup.contracts;
-      state.networks = storeMockup.networks;
-      setDataLocal("networks", storeMockup.networks);
-      setDataLocal("contracts", storeMockup.contracts);
-      setDataLocal("abis", storeMockup.abis);
+      state.abis = STORE_MOCKUP.abis;
+      state.contracts = STORE_MOCKUP.contracts;
+      state.networks = STORE_MOCKUP.networks;
+      state.envs = STORE_MOCKUP.envs;
+      setDataLocal("networks", STORE_MOCKUP.networks);
+      setDataLocal("contracts", STORE_MOCKUP.contracts);
+      setDataLocal("abis", STORE_MOCKUP.abis);
+      setDataLocal("envs", STORE_MOCKUP.envs);
     },
 
+    actionImportStore: (state, action: PayloadAction<DataLocal>) => {
+      console.log("data-import", action.payload);
+      state.abis = action.payload.abis || [];
+      state.contracts = action.payload.contracts || [];
+      state.networks = action.payload.networks || [];
+      state.envs = action.payload.envs || [];
+      setDataLocal("networks", action.payload.networks || []);
+      setDataLocal("contracts", action.payload.contracts || []);
+      setDataLocal("abis", action.payload.abis || []);
+      setDataLocal("envs", action.payload.envs || []);
+    },
     actionSetNetworks: (state, action: PayloadAction<NetworkIF[]>) => {
       state.networks = action.payload;
       setDataLocal("networks", action.payload);
@@ -171,6 +184,7 @@ export const {
   actionSetAbis,
   actionUpdateAbis,
   actionRemoveAbis,
+  actionImportStore,
 } = sourceSlice.actions;
 
 export const sourceReducer = sourceSlice.reducer;

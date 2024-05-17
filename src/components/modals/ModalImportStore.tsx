@@ -7,11 +7,7 @@ import { useDispatch } from "react-redux";
 import { z, ZodError } from "zod";
 import { NotifySystem } from "../../common/notify";
 import { DataLocal } from "../../common/types";
-import {
-  actionSetAbis,
-  actionSetContracts,
-  actionSetNetworks,
-} from "../../libs/store/reducers/source.slice";
+import { actionImportStore } from "../../libs/store/reducers/source.slice";
 type Props = ContextModalProps<{ modalBody: string }>;
 
 const MyDataSchema = z.object({
@@ -60,9 +56,7 @@ const ModalImportStore = ({}: Props) => {
           const jsonString = e.target.result;
           const jsonObject = JSON.parse(jsonString) as DataLocal;
           MyDataSchema.parse(jsonObject);
-          dispatch(actionSetAbis(jsonObject?.abis || []));
-          dispatch(actionSetContracts(jsonObject?.contracts || []));
-          dispatch(actionSetNetworks(jsonObject?.networks || []));
+          dispatch(actionImportStore(jsonObject));
           NotifySystem.success("Import data successful!");
           modals.closeAll();
         } catch (error: any) {

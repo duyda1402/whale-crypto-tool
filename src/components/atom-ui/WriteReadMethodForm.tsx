@@ -1,29 +1,29 @@
 import {
   ActionIcon,
+  Badge,
   Button,
+  CopyButton,
   Group,
   Image,
-  Stack,
-  TextInput,
-  Text,
-  Tooltip,
-  Textarea,
-  Badge,
-  CopyButton,
   Loader,
+  Stack,
+  Text,
+  Textarea,
+  TextInput,
+  Tooltip,
 } from "@mantine/core";
+import { IconCheck, IconCopy } from "@tabler/icons-react";
 import { Buffer } from "buffer";
 import * as ethers from "ethers";
+import lodash, { isBoolean, isNumber, isObject, isString } from "lodash";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import IconMetaMask from "../../assets/metamask.svg";
-import { AbiDecode } from "../../common/types";
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../libs/store";
-import { NotifySystem } from "../../common/notify";
+import IconMetaMask from "../../assets/metamask.svg";
 import { ErrorBlockChain } from "../../common/enum/base";
-import lodash from "lodash";
-import { IconCheck, IconCopy } from "@tabler/icons-react";
+import { NotifySystem } from "../../common/notify";
+import { AbiDecode } from "../../common/types";
+import { RootState } from "../../libs/store";
 import ViewBigNumber from "./ViewBigNumber";
 
 const WriteReadMethodForm = ({
@@ -80,7 +80,6 @@ const WriteReadMethodForm = ({
         } else {
           res = await contract?.[func.name](...inputs);
         }
-        console.log("tx", func.type, res);
         setResult(res);
       }
     } catch (err: any) {
@@ -95,7 +94,6 @@ const WriteReadMethodForm = ({
       return NotifySystem.error(ErrorBlockChain[5002]);
     }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    window.myProvider = provider;
     try {
       await provider.send("wallet_requestPermissions", [
         {
@@ -217,75 +215,7 @@ const WriteReadMethodForm = ({
               <Loader size="sm" />
             ) : (
               <Stack>
-                {func?.outputs?.map((output: any) => {
-                  return (
-                    <Group key={output.name}>
-                      <Badge size="sm">{output.type}</Badge>
-                      {result !== null && result !== undefined && (
-                        <>
-                          {output.type === "bool" && (
-                            <Text color="gray.8" fz="sm">
-                              {(func?.outputs || []).length > 1
-                                ? result?.[output.name]?.toString()
-                                : result?.toString()}
-                            </Text>
-                          )}
-                          {output.type === "uint256" && (
-                            <>
-                              {ethers.BigNumber.isBigNumber(
-                                (func?.outputs || []).length > 1
-                                  ? result?.[output.name]
-                                  : result
-                              ) && (
-                                <ViewBigNumber
-                                  value={
-                                    (func?.outputs || []).length > 1
-                                      ? result?.[output.name]
-                                      : result
-                                  }
-                                />
-                              )}
-                            </>
-                          )}
-                          {output.type !== "bool" &&
-                            output.type !== "uint256" && (
-                              <>
-                                <Text color="gray.8" fz="sm">
-                                  {(func?.outputs || []).length > 1
-                                    ? result?.[output.name]?.toString()
-                                    : result?.toString()}
-                                </Text>
-                                <CopyButton
-                                  value={
-                                    (func?.outputs || []).length > 1
-                                      ? result?.[output.name]?.toString()
-                                      : result?.toString()
-                                  }
-                                  timeout={1000}
-                                >
-                                  {({ copied, copy }) => (
-                                    <Tooltip
-                                      label={copied ? "Copied" : "Copy"}
-                                      withArrow
-                                      position="right"
-                                    >
-                                      <ActionIcon
-                                        size="xs"
-                                        color={copied ? "teal" : "gray"}
-                                        onClick={copy}
-                                      >
-                                        {copied ? <IconCheck /> : <IconCopy />}
-                                      </ActionIcon>
-                                    </Tooltip>
-                                  )}
-                                </CopyButton>
-                              </>
-                            )}
-                        </>
-                      )}
-                    </Group>
-                  );
-                })}
+                <ViewResult result={result} outputs={func?.outputs} />
               </Stack>
             )}
           </Stack>
@@ -309,3 +239,116 @@ const WriteReadMethodForm = ({
 };
 
 export default WriteReadMethodForm;
+
+const ViewResult = ({
+  outputs = [],
+  result,
+}: {
+  outputs: Array<any>;
+  result: any;
+}) => {
+  const isResultArray = outputs.length > 1;
+  return (
+    <React.Fragment>
+      {outputs?.map((output: any) => {
+        return (
+          <Group key={output.name} align="start">
+            <Badge size="sm">{output.type}</Badge>
+            {result !== null && result !== undefined && (
+              <>
+                {/* TYPE BOOL */}
+                {output.type === "bool" && (
+                  <Text color="gray.8" fz="sm">
+                    {isResultArray
+                      ? result?.[output.name]?.toString()
+                      : result?.toString()}
+                  </Text>
+                )}
+                {/* TYPE unit */}
+                {output.type.includes("uint") && (
+                  <>
+                    {ethers.BigNumber.isBigNumber(
+                      isResultArray ? result?.[output.name] : result
+                    ) ? (
+                      <ViewBigNumber
+                        value={isResultArray ? result?.[output.name] : result}
+                      />
+                    ) : (
+                      <Text color="gray.8" fz="sm">
+                        {isResultArray ? result?.[output.name] : result}
+                      </Text>
+                    )}
+                  </>
+                )}
+                {/* TYPE tuple */}
+                {output.type === "tuple" && <ViewTupleValue value={result} />}
+                {/* TYPE address */}
+                {output.type === "address" && (
+                  <>
+                    <Text color="gray.8" fz="sm">
+                      {(outputs || []).length > 1
+                        ? result?.[output.name]?.toString()
+                        : result?.toString()}
+                    </Text>
+                    <CopyButton
+                      value={
+                        (outputs || []).length > 1
+                          ? result?.[output.name]?.toString()
+                          : result?.toString()
+                      }
+                      timeout={1000}
+                    >
+                      {({ copied, copy }) => (
+                        <Tooltip
+                          label={copied ? "Copied" : "Copy"}
+                          withArrow
+                          position="right"
+                        >
+                          <ActionIcon
+                            size="xs"
+                            color={copied ? "teal" : "gray"}
+                            onClick={copy}
+                          >
+                            {copied ? <IconCheck /> : <IconCopy />}
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
+                    </CopyButton>
+                  </>
+                )}
+              </>
+            )}
+          </Group>
+        );
+      })}
+    </React.Fragment>
+  );
+};
+
+const ViewTupleValue = ({ value }: { value: any }) => {
+  return (
+    <Stack>
+      {Object.keys(value)
+        .map((i) => i)
+        .filter((key) => !Number(key) && Number(key) !== 0)
+        .map((key: string) => (
+          <Group key={key} spacing="xl">
+            <Text color="gray.8" fz="sm">
+              {key}
+            </Text>
+            {ethers.BigNumber.isBigNumber(value[key]) && (
+              <ViewBigNumber value={value[key]} />
+            )}
+            {isBoolean(value[key]) && <Text> {value[key].toString()}</Text>}
+            {(isString(value[key]) || isNumber(value[key])) && (
+              <Text>{value[key]}</Text>
+            )}
+            {isObject(value[key]) &&
+              !ethers.BigNumber.isBigNumber(value[key]) && (
+                <Text> {JSON.stringify(value[key])}</Text>
+              )}
+          </Group>
+        ))}
+    </Stack>
+  );
+};

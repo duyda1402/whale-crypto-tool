@@ -1,7 +1,6 @@
 import { AppShell, Box, Container, Group, ScrollArea } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { useWeb3ModalTheme } from "@web3modal/wagmi/react";
-import { ethers } from "ethers";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useLocation } from "react-router-dom";
@@ -48,14 +47,12 @@ const RootLayout = () => {
 
   const connectProvider = async () => {
     if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
       const network = networks.find(
         (n) => n.chainId.toString() === chainId.toString()
       );
       if (network) {
         dispatch(actionSelectNetwork(network));
         NotifySystem.success(`Connected to ${network.networkName} network`);
-        window.myProvider = provider;
       } else {
         NotifySystem.warn("Connected to unknown network");
       }
