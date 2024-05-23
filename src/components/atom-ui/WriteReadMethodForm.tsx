@@ -316,7 +316,7 @@ const ViewResult = ({
                     </CopyButton>
                   </>
                 )}
-                {output.type === "bytes32" && (
+                {output.type.includes("byte") && (
                   <>
                     <Text color="gray.8" fz="sm">
                       {(outputs || []).length > 1
