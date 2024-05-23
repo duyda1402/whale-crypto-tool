@@ -316,6 +316,39 @@ const ViewResult = ({
                     </CopyButton>
                   </>
                 )}
+                {output.type === "bytes32" && (
+                  <>
+                    <Text color="gray.8" fz="sm">
+                      {(outputs || []).length > 1
+                        ? result?.[output.name]?.toString()
+                        : result?.toString()}
+                    </Text>
+                    <CopyButton
+                      value={
+                        (outputs || []).length > 1
+                          ? result?.[output.name]?.toString()
+                          : result?.toString()
+                      }
+                      timeout={1000}
+                    >
+                      {({ copied, copy }) => (
+                        <Tooltip
+                          label={copied ? "Copied" : "Copy"}
+                          withArrow
+                          position="right"
+                        >
+                          <ActionIcon
+                            size="xs"
+                            color={copied ? "teal" : "gray"}
+                            onClick={copy}
+                          >
+                            {copied ? <IconCheck /> : <IconCopy />}
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
+                    </CopyButton>
+                  </>
+                )}
               </>
             )}
           </Group>
