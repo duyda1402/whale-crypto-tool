@@ -23,6 +23,7 @@ interface SourceState {
 const getDataLocal = (): DataLocal => {
   const dataStr = localStorage.getItem(KEY_DATA_LOCALE);
   if (!dataStr) {
+    localStorage.setItem(KEY_DATA_LOCALE, JSON.stringify(STORE_MOCKUP));
     return STORE_MOCKUP;
   }
   return JSON.parse(dataStr);
