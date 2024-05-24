@@ -1,11 +1,11 @@
-import { AppShell, Box, Container, Group, ScrollArea } from "@mantine/core";
+import { AppShell, Box, Container, Flex, Group, Space } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { useWeb3ModalTheme } from "@web3modal/wagmi/react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useLocation } from "react-router-dom";
 import { useChainId } from "wagmi";
-import { KEY_MENU_ACTIVE } from "../../common";
+import { KEY_MENU_ACTIVE, NAVBAR_WIDTH } from "../../common";
 import { ErrorBlockChain } from "../../common/enum/base";
 import { NotifySystem } from "../../common/notify";
 import { RootState } from "../../libs/store";
@@ -92,26 +92,26 @@ const RootLayout = () => {
         <Box pos="fixed" right={32} bottom={28} sx={{ zIndex: 100 }}>
           <RootTool />
         </Box>
-        <Container
-          size="xl"
-          sx={{
-            height: "100%",
-          }}
-        >
-          <ScrollArea
-            sx={(theme) => ({
-              height: "97%",
-              backgroundColor:
-                theme.colorScheme === "dark" ? theme.colors.dark[6] : "#fff",
-              boxShadow: theme.shadows.lg,
-            })}
-          >
-            <Outlet />
-          </ScrollArea>
-          <Group position="center" py="xs">
-            <Footer />
-          </Group>
-        </Container>
+        <Flex>
+          <Space w={NAVBAR_WIDTH} />
+          <Container size="xl" w="100%">
+            <Box
+              mih="90vh"
+              sx={(theme) => ({
+                backgroundColor:
+                  theme.colorScheme === "dark" ? theme.colors.dark[6] : "#fff",
+                boxShadow: theme.shadows.lg,
+              })}
+            >
+              <Box>
+                <Outlet />
+              </Box>
+            </Box>
+            <Group position="center" py="xs">
+              <Footer />
+            </Group>
+          </Container>
+        </Flex>
       </AppShell>
     </ModalsProvider>
   );

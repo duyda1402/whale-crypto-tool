@@ -23,14 +23,14 @@ import {
 import { useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
-import { KEY_MENU_ACTIVE } from "../../common";
+import { KEY_MENU_ACTIVE, NAVBAR_WIDTH } from "../../common";
 import { PATH_ROUTER_BASE } from "../../common/enum/base";
 import useAuthFirebase from "../../hooks/useAuthFirebase";
 import myLogo from "/logo.svg";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
-    width: rem(80),
+    width: rem(NAVBAR_WIDTH),
     height: "100vh",
     padding: theme.spacing.md,
     display: "flex",
