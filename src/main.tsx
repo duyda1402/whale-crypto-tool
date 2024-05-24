@@ -8,13 +8,14 @@ import { store } from "./libs/store/index.ts";
 import { router } from "./routers.tsx";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Chain, defineChain } from "viem";
-import { WagmiProvider } from "wagmi";
 import { createWeb3Modal } from "@web3modal/wagmi/react";
-import { mainnet } from "viem/chains";
-import { NetworkIF } from "./common/types/index.ts";
-import { KEY_DATA_LOCALE } from "./common/index.ts";
 import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
+import { Chain, defineChain } from "viem";
+import { mainnet } from "viem/chains";
+import { WagmiProvider } from "wagmi";
+import { KEY_DATA_LOCALE } from "./common/index.ts";
+import { NetworkIF } from "./common/types/index.ts";
+
 // 0. Setup queryClient
 const queryClient = new QueryClient();
 

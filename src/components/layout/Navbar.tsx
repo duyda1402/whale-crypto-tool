@@ -1,6 +1,8 @@
 import {
+  Avatar,
   Center,
   Image,
+  Menu,
   Navbar,
   Stack,
   Tooltip,
@@ -14,6 +16,7 @@ import {
   IconFileFilled,
   IconHome2,
   IconLogout,
+  IconSettings,
   IconSettingsFilled,
   IconVersionsFilled,
 } from "@tabler/icons-react";
@@ -21,8 +24,9 @@ import { useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 import { KEY_MENU_ACTIVE } from "../../common";
-import myLogo from "/logo.svg";
 import { PATH_ROUTER_BASE } from "../../common/enum/base";
+import useAuthFirebase from "../../hooks/useAuthFirebase";
+import myLogo from "/logo.svg";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
@@ -88,6 +92,7 @@ const NavbarRoot = () => {
   const [active, setActive] = useState<string>(
     localStorage.getItem(KEY_MENU_ACTIVE) || "$home"
   );
+  const authFirebase = useAuthFirebase();
   const menus = mockMenu.map((menu, index) => (
     <NavbarLink
       {...menu}
@@ -115,7 +120,42 @@ const NavbarRoot = () => {
       </div>
 
       <Stack justify="center" spacing={rem(4)}>
-        <NavbarLink icon={IconLogout} label="Logout" />
+        <Menu shadow="md" width={200} position="right-end">
+          <Menu.Target>
+            <Tooltip
+              label={authFirebase?.user?.displayName}
+              position="right-start"
+            >
+              <Avatar radius={999} src={authFirebase?.user?.photoURL}>
+                {authFirebase?.user?.displayName?.at(0)}
+              </Avatar>
+            </Tooltip>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Label>{authFirebase?.user?.displayName}</Menu.Label>
+            <Menu.Item
+              onClick={() => navigate("/personal")}
+              icon={<IconSettings size={14} />}
+            >
+              Settings
+            </Menu.Item>
+
+            {/* <Menu.Divider />
+
+            <Menu.Label>Danger zone</Menu.Label>
+            <Menu.Item icon={<IconArrowsLeftRight size={14} />}>
+              Transfer my data
+            </Menu.Item> */}
+            <Menu.Item
+              color="red"
+              icon={<IconLogout size={14} />}
+              onClick={authFirebase.logoutFirebase}
+            >
+              Logout
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
       </Stack>
     </Navbar>
   );
