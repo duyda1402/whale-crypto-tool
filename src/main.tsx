@@ -11,7 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createWeb3Modal } from "@web3modal/wagmi/react";
 import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
 import { Chain, defineChain } from "viem";
-import { mainnet } from "viem/chains";
+import { sepolia } from "viem/chains";
 import { WagmiProvider } from "wagmi";
 import { KEY_DATA_LOCALE } from "./common/index.ts";
 import { NetworkIF } from "./common/types/index.ts";
@@ -54,7 +54,7 @@ const metadata = {
 
 export const wagmiConfig = defaultWagmiConfig({
   projectId: PROJECT_ID,
-  chains: [mainnet, ...chains],
+  chains: [sepolia, ...chains],
   metadata,
 });
 
@@ -62,8 +62,8 @@ export const wagmiConfig = defaultWagmiConfig({
 createWeb3Modal({
   wagmiConfig: wagmiConfig,
   projectId: PROJECT_ID,
-  enableAnalytics: true, // Optional - defaults to your Cloud configuration
-  enableOnramp: true, // Optional - false as default
+  enableAnalytics: false, // Optional - defaults to your Cloud configuration
+  enableOnramp: false, // Optional - false as default
 });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

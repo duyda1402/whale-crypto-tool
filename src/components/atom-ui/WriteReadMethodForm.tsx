@@ -25,6 +25,7 @@ import { NotifySystem } from "../../common/notify";
 import { AbiDecode } from "../../common/types";
 import { RootState } from "../../libs/store";
 import ViewBigNumber from "./ViewBigNumber";
+import { useReadContract, useTransaction, useWriteContract } from "wagmi";
 
 const WriteReadMethodForm = ({
   func,
@@ -40,15 +41,25 @@ const WriteReadMethodForm = ({
   const network = useSelector((state: RootState) => state.selector.network);
   const CONTRACT = useSelector((state: RootState) => state.selector.contract);
   const abis = useSelector((state: RootState) => state.source.abis);
+  const { data, writeContractAsync, error: errorConnect } = useWriteContract();
+  // const { } = useReadContract();
+  const resultTransaction = useTransaction({
+    hash: data,
+  });
 
   useEffect(() => {
     setResult(null);
   }, [func]);
 
+  console.log("Here Data Transaction ===", resultTransaction.data);
+  console.log("Here Error Data Transaction ===", errorConnect);
+
+  useEffect(() => {});
+
   const onSubmit = async (_data: any) => {
-    if (!network || !window.ethereum) {
-      return NotifySystem.error(ErrorBlockChain[5002]);
-    }
+    // if (!window.ethereum) {
+    //   return NotifySystem.error("heer" + ErrorBlockChain[5002]);
+    // }
     if (!CONTRACT || !func.name) {
       return NotifySystem.error(ErrorBlockChain[9000]);
     }
@@ -56,32 +67,42 @@ const WriteReadMethodForm = ({
     try {
       const abiObj = lodash.find(abis, { uid: CONTRACT?.abi });
       const ABI_USE = JSON.parse(abiObj?.payload || "[]");
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const curNetwork = await provider.getNetwork();
-      if (curNetwork?.chainId?.toString() !== CONTRACT.chainId?.toString()) {
-        return NotifySystem.error(ErrorBlockChain[5001]);
-      }
+      // const provider = new ethers.providers.Provider(window?.ethereum);
+      // const curNetwork = await provider.getNetwork();
+      // if (curNetwork?.chainId?.toString() !== CONTRACT.chainId?.toString()) {
+      //   return NotifySystem.error(ErrorBlockChain[5001]);
+      // }
       //Setting Input
       let inputs: any[] = [];
-      const contract = new ethers.Contract(
-        CONTRACT?.address,
-        ABI_USE,
-        provider
-      );
+      // const contract = new ethers.Contract(
+      //   CONTRACT?.address,
+      //   ABI_USE,
+      //   provider
+      // );
       func.inputs.forEach((input) => {
         inputs.push(lodash.get(_data, `${func.name}.${input.name}`));
       });
 
-      if (func.name in contract.functions) {
-        let res: any;
-        if (func.stateMutability === "nonpayable") {
-          const signer = provider.getSigner();
-          res = await contract.connect(signer)?.[func.name](...inputs);
-        } else {
+      let res: any;
+      if (func.stateMutability === "nonpayable") {
+        await writeContractAsync({
+          address: CONTRACT?.address as `0x${string}`,
+          abi: ABI_USE,
+          functionName: func.name,
+          args: inputs,
+        });
+      } else {
+        if (window.ethereum) {
+          const provider = new ethers.providers.Web3Provider(window?.ethereum);
+          const contract = new ethers.Contract(
+            CONTRACT?.address,
+            ABI_USE,
+            provider
+          );
           res = await contract?.[func.name](...inputs);
         }
-        setResult(res);
       }
+      setResult(res);
     } catch (err: any) {
       NotifySystem.error(err.message);
     } finally {
