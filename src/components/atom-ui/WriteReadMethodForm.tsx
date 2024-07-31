@@ -19,13 +19,13 @@ import lodash, { isBoolean, isNumber, isObject, isString } from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import { useTransaction, useWriteContract } from "wagmi";
 import IconMetaMask from "../../assets/metamask.svg";
 import { ErrorBlockChain } from "../../common/enum/base";
 import { NotifySystem } from "../../common/notify";
 import { AbiDecode } from "../../common/types";
 import { RootState } from "../../libs/store";
 import ViewBigNumber from "./ViewBigNumber";
-import { useReadContract, useTransaction, useWriteContract } from "wagmi";
 
 const WriteReadMethodForm = ({
   func,
